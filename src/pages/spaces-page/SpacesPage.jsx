@@ -1,37 +1,35 @@
-import { useQuery } from "@tanstack/react-query"
-import { getAllSpaces, getGoalsWithinASpace } from "./helpers/QueryFunctions"
+import { useState } from "react"
+import GoalViewSetter from "./components/GoalViewSetter";
+import ListOfGoals from "./components/ListOfGoals";
 
 const SpacesPage = () => {
-    const space = 1
+    const [shouldDisplayCategories, setShouldDisplayCategories] = useState(false);
 
-    const { data: goals } = useQuery({
-        queryKey: ['goals', space],
-        queryFn: () => getGoalsWithinASpace(space)
-    })
+    /* 
+    const space = 1
 
     const { data: spaces } = useQuery({
         queryKey: ['spaces'],
         queryFn: () => getAllSpaces()
     })
 
-    return (<>
-        <div>{goals && goals.length > 0
-            ? <ul>
-                {goals.map(goal => (
-                    <li key={goal.id}>{goal.title}</li>
-                ))}
-            </ul>
-            : <p>{`No goals in the space.`}</p>
-        }</div>
 
-        <div>{spaces && spaces.length > 0
-            ? <ul>
-                {spaces.map(space => (
-                    <li key={space.id}>{space.title}</li>
-                ))}
-            </ul>
-            : <p>{`No spaces in the space.`}</p>
-        }</div>
+    const [shouldDisplayModal, setShouldDisplayModal] = useState(false); */
+
+    return (<>
+        <div className="md:max-w-[500px] md:mx-auto bg-light2 h-screen flex flex-col gap-3">
+            {/* <ModalNewGoal modal={modal} hideModal={hideModal} />
+            <ModalSpaces /> */}
+
+            <GoalViewSetter
+                isCategoryView={shouldDisplayCategories}
+                setIsCategoryView={setShouldDisplayCategories}
+            />
+
+            <ListOfGoals shouldOrganizeByStatus={!shouldDisplayCategories} />
+
+            {/* <NavBottom showModal={showModal} /> */}
+        </div>
     </>)
 }
 export default SpacesPage
