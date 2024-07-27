@@ -12,12 +12,14 @@ const GoalCollectionCard = ({ criteria }) => {
         <div className="bg-light1 rounded-lg p-3 mx-3">
             <div className="flex justify-between items-end mb-2">
                 <div className="title text-xs">{criteria.title}</div>
+
+                {/* TODO: display new goal creation modal */}
                 <div className="bg-light2 size-7 rounded-full flex justify-center items-center"
-                // TODO: display new goal creation modal
                 >
                     PIcon
                 </div>
             </div>
+            
             <div className="rounded-lg flex flex-col gap-3">
                 {goalList.map(goal => <GoalCard key={goal.id} goal={goal} />)}
             </div>

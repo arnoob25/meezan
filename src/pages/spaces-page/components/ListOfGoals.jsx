@@ -18,7 +18,7 @@ const ListOfGoals = ({ shouldOrganizeByStatus }) => {
         ))
     }
 
-    else {
+    else { // organize by priority
         return (listOfPriorityLevels.sort((a, b) => a.order - b.color).map(
             priorityType => <GoalCollectionCard key={priorityType.order} criteria={priorityType} />
         ))
