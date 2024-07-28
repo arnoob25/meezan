@@ -2,29 +2,40 @@ import { useForm } from 'react-hook-form';
 import { AddGoalSchema } from '../helpers/FormSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useGoalCollectionContext, useSpaceContext } from '../helpers/Contexts';
+import { useCreateGoalMutation } from '../helpers/CreateGoalMutationFunction';
 
 const GoalCreationForm = () => {
     const { currentSpaceId, selectedCategoryId, shouldDisplayCategories } = useSpaceContext()
-    const { collectionCriteria: { priority, status } } = useGoalCollectionContext()
+    const { collectionCriteria: { priority, status }, setIsModalVisible } = useGoalCollectionContext()
 
-    const { register, handleSubmit, formState: { errors } } = useForm({
+    const { register, handleSubmit, formState: { errors }, reset } = useForm({
         resolver: zodResolver(AddGoalSchema)
     });
 
-    /*  const { mutate } = useMutation({
-         mutationFn: 
-     }) */
+    const createGoalMutation = useCreateGoalMutation();
 
     const onSubmit = (data) => {
-        data = {
-            ...data,
-            currentSpaceId,
+        const goalData = {
+            title: data.title,
+            space_id: currentSpaceId,
             // category is null when creating goal from the 'Important Goals' - view
-            selectedCategoryId: shouldDisplayCategories ? selectedCategoryId : null,
-            priority: priority ? priority.trim() : '',
-            status: status ? status.trim() : ''
-        }
-        console.log(data);
+            category_id: shouldDisplayCategories ? selectedCategoryId : null,
+            priority: (priority
+                ? priority.trim()
+                : shouldDisplayCategories ? 'delay' : 'important'),
+            status: status ? status.trim() : 'next',
+            duration: data.duration,
+            approach: data.approach,
+            time_window: data.timeWindow,
+        };
+        
+        createGoalMutation.mutate(goalData, {
+            onSuccess: () => {
+                console.log('Goal created successfully');
+                reset();
+                setIsModalVisible(false);
+            },
+        });
     };
 
     return (
@@ -77,8 +88,13 @@ const GoalCreationForm = () => {
                     {errors.duration && <p>{errors.duration.message}</p>}
                 </div>
 
-                <button type="submit">Create Goal</button>
+                <button type="submit" disabled={createGoalMutation.isLoading}>
+                    {createGoalMutation.isLoading ? 'Creating...' : 'Create Goal'}
+                </button>
             </form>
+            {createGoalMutation.isError && (
+                <p className="text-red-500">Error creating goal: {createGoalMutation.error.message}</p>
+            )}
         </div>
     );
 };

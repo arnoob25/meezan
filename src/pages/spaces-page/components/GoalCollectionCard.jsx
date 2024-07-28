@@ -7,7 +7,7 @@ const GoalCollectionCard = () => {
     const {
         goals,
         collectionCriteria: { title, priority, status },
-        setModalVisibility,
+        setIsModalVisible,
     } = useGoalCollectionContext()
 
     let filteredGoals = [];
@@ -26,7 +26,7 @@ const GoalCollectionCard = () => {
 
                 <div
                     className="bg-light2 size-7 rounded-full flex justify-center items-center cursor-pointer"
-                    onClick={() => setModalVisibility(true)}
+                    onClick={() => setIsModalVisible(true)}
                 >
                     +
                 </div>

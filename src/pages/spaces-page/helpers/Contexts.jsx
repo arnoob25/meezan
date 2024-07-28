@@ -26,11 +26,11 @@ export const useSpaceContext = () => useContext(SpaceContext);
 const GoalCollectionContext = createContext()
 
 export const GoalCollectionContextProvider = ({ children, value }) => {
-  const [isModalVisible, setModalVisibility] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const context = {
     isModalVisible,
-    setModalVisibility,
+    setIsModalVisible,
     ...value,
   }
 
@@ -39,3 +39,4 @@ export const GoalCollectionContextProvider = ({ children, value }) => {
 
 export const useGoalCollectionContext = () => useContext(GoalCollectionContext)
 // #endregion
+
