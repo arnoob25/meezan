@@ -1,26 +1,26 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from "./QueryClient";
 
-export const useCreateGoalMutation = () => {
+export const useCreateCategoryMutation = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async (newGoal) => {
+        mutationFn: async (newCategory) => {
             const { data, error } = await supabase
-                .from('goals')
-                .insert([newGoal])
+                .from('categories')
+                .insert([newCategory])
                 .select();
 
             if (error) throw error;
             return data[0];
         },
-        onSuccess: (newGoal) => {
+        onSuccess: (newCategory) => {
             // Invalidate and refetch relevant queries
-            queryClient.invalidateQueries(['goals']);
+            queryClient.invalidateQueries(['categories']);
         },
         onError: (error) => {
             // TODO: show a toast notification
-            console.error('Error creating goal:', error);
+            console.error('Error creating category:', error);
         },
     });
 };

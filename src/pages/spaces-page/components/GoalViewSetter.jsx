@@ -1,6 +1,8 @@
 
+import { useState } from "react";
 import { useSpaceContext } from "../helpers/Contexts";
 import CategoryTabs from "./CategoryTabs";
+import CategoryCreationModal from "./CategoryCreationModal";
 
 const GoalViewSetter = () => {
     const { shouldDisplayCategories, setShouldDisplayCategories } = useSpaceContext()
@@ -12,6 +14,7 @@ const GoalViewSetter = () => {
                     ? <>
                         <CategoryViewDeactivator onClick={() => setShouldDisplayCategories(false)} />
                         <CategoryTabs />
+                        <CategoryCreationButton />
                     </>
 
                     : <>
@@ -45,3 +48,17 @@ const CategoryViewDeactivator = ({ onClick }) => (
         #
     </button>
 );
+
+const CategoryCreationButton = () => {
+    const [isModalVisible, setIsModalVisible] = useState(false)
+
+    return (<>
+        <div
+            className="bg-light2 size-7 rounded-full flex justify-center items-center cursor-pointer"
+            onClick={() => setIsModalVisible(true)}
+        >
+            +
+        </div>
+        <CategoryCreationModal isModalVisible={isModalVisible} setIsModalVisible={setIsModalVisible} />
+    </>)
+}

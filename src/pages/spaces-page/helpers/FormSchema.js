@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+// goal creation
 const timeWindows = z.enum([
     'pre_fajr',
     'pre_duhr',
@@ -14,9 +15,17 @@ const schedulingMethods = z.enum([
     'laid_back'
 ])
 
-export const AddGoalSchema = z.object({
+// TODO: review the schema and update the submission handler
+export const CreateGoalSchema = z.object({
     title: z.string().optional(),
     approach: schedulingMethods.optional(),
     timeWindow: timeWindows.optional(),
     duration: z.number().optional(),
+})
+
+// category creation
+
+// TODO: review the schema and update the submission handler
+export const CreateCategorySchema = z.object({
+    title: z.string().optional(),
 })

@@ -43,7 +43,7 @@ export async function getAllCategoriesForASpace(spaceId) {
 
 export async function getAllGoalsWithinACategory(categoryId) {
     let { data: goals, error } = await supabase
-        .from('goal')
+        .from('goals')
         .select("*")
         .eq('category_id', categoryId)
         .neq('status', 'completed')
@@ -58,7 +58,7 @@ export async function getAllGoalsWithinACategory(categoryId) {
 
 export async function getAllImportantGoalsWithinASpace(spaceId) {
     let { data: goals, error } = await supabase
-        .from('goal')
+        .from('goals')
         .select("*")
         .eq('space_id', spaceId)
         .eq('priority', 'important')
