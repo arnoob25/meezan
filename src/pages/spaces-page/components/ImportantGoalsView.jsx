@@ -8,7 +8,7 @@ const listOfStatusTypes = [
     { order: 2, title: 'Next', status: 'next', color: 'yellow' },
 ]
 
-const ImportantGoals = () => {
+const ImportantGoalsView = () => {
     const { currentSpaceId } = useSpaceContext()
 
     const { data: goals } = useQuery({
@@ -24,4 +24,4 @@ const ImportantGoals = () => {
         )
     ))
 }
-export default ImportantGoals
+export default ImportantGoalsView

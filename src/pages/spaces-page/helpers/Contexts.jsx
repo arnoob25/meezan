@@ -39,4 +39,3 @@ export const GoalCollectionContextProvider = ({ children, value }) => {
 
 export const useGoalCollectionContext = () => useContext(GoalCollectionContext)
 // #endregion
-

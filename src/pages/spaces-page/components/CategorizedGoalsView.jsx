@@ -10,7 +10,7 @@ const listOfPriorityLevels = [
     { order: 3, title: 'Ignore', priority: 'ignore', color: 'gray' },
 ]
 
-const CategorizedGoals = () => {
+const CategorizedGoalsView = () => {
     const { selectedCategoryId } = useSpaceContext()
 
     const { data: goals } = useQuery({
@@ -26,4 +26,4 @@ const CategorizedGoals = () => {
         )
     ))
 }
-export default CategorizedGoals
+export default CategorizedGoalsView

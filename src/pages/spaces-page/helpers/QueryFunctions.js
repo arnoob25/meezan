@@ -1,4 +1,5 @@
-import { supabase } from "./QueryClient";
+import { supabase } from "../../../QueryClient";
+
 
 // TODO: get rituals that haven't been completed yet
 export async function getCurrentDayRituals(day, period) {

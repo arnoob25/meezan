@@ -1,7 +1,7 @@
 
 import { useSpaceContext } from "../helpers/Contexts"
-import CategorizedGoals from "./CategorizedGoals"
-import ImportantGoals from "./ImportantGoals"
+import CategorizedGoalsView from "./CategorizedGoalsView"
+import ImportantGoalsView from "./ImportantGoalsView"
 
 const ListOfGoals = () => {
     const { shouldDisplayCategories } = useSpaceContext()
@@ -9,8 +9,8 @@ const ListOfGoals = () => {
     return (
         <div> {/* TODO: this should be a scrollable area */}
             {shouldDisplayCategories
-                ? <CategorizedGoals />
-                : <ImportantGoals />
+                ? <CategorizedGoalsView />
+                : <ImportantGoalsView />
             }
         </div>
     )
