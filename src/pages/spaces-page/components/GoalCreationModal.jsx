@@ -1,0 +1,17 @@
+import GoalCreationForm from "../forms/GoalCreationForm";
+import { useGoalCollectionContext } from "../helpers/Contexts";
+
+const GoalCreationModal = () => {
+    const { isModalVisible, setModalVisibility } = useGoalCollectionContext()
+
+    return (
+        <div className={`w-[100svw] h-[100svh] p-10 flex justify-center items-center ${isModalVisible ? "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" : "hidden"}`}>
+            <button
+                onClick={() => setModalVisibility(false)}
+                className="w-screen h-screen bg-dark1/30 backdrop-blur-lg absolute top-0 left-0 cursor-default"
+            />
+            <GoalCreationForm />
+        </div>
+    );
+}
+export default GoalCreationModal

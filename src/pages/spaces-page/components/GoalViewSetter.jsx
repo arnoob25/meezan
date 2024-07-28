@@ -1,28 +1,24 @@
-import CategoryTab from "./CategoryTab";
 
-// TODO: Replace with query
-const categories = [
-    { id: 1, title: 'SolidJS' },
-    { id: 2, title: 'RAMA' },
-    { id: 3, title: 'Rust' }
-];
+import { useSpaceContext } from "../helpers/Contexts";
+import CategoryTabs from "./CategoryTabs";
 
-const GoalViewSetter = ({ isCategoryView, setIsCategoryView }) => {
-    console.log(isCategoryView);
+const GoalViewSetter = () => {
+    const { shouldDisplayCategories, setShouldDisplayCategories } = useSpaceContext()
+
     return (
         <div className="flex gap-1 mx-3 overflow-x-scroll">
             <div className="flex flex-grow items-center gap-1">
-                {isCategoryView
+                {shouldDisplayCategories
                     ? <>
-                        <CategoryViewDeactivator onClick={() => setIsCategoryView(false)} />
-                        <CategoryTabs categories={categories} />
+                        <CategoryViewDeactivator onClick={() => setShouldDisplayCategories(false)} />
+                        <CategoryTabs />
                     </>
 
                     : <>
-                        <div className="bg-light1 px-3 py-1 rounded-lg text-lg whitespace-nowrap">
+                        <div className="bg-light1 px-3 py-1 mr-auto rounded-lg text-lg whitespace-nowrap">
                             Important
                         </div>
-                        <CategoryViewActivator onClick={() => setIsCategoryView(true)} />
+                        <CategoryViewActivator onClick={() => setShouldDisplayCategories(true)} />
                     </>
                 }
             </div>
@@ -31,28 +27,21 @@ const GoalViewSetter = ({ isCategoryView, setIsCategoryView }) => {
 };
 export default GoalViewSetter;
 
-const CategoryViewDeactivator = ({ onClick }) => (
-    <button
-        className="bg-light1 text-lg rounded-full size-10 flex justify-center items-center"
-        onClick={onClick}
-    >
-        {'icon'}
-    </button>
-);
 
 const CategoryViewActivator = ({ onClick }) => (
     <button
         className="bg-light1 text-lg rounded-full size-10 flex justify-center items-center"
         onClick={onClick}
     >
-        {'icon'}
+        #
     </button>
 );
 
-const CategoryTabs = ({ categories }) => (
-    <div className="flex flex-grow gap-1">
-        {categories.map(category => (
-            <CategoryTab key={category.id} title={category.title} />
-        ))}
-    </div>
+const CategoryViewDeactivator = ({ onClick }) => (
+    <button
+        className="bg-light1 text-lg rounded-full size-10 flex justify-center items-center"
+        onClick={onClick}
+    >
+        #
+    </button>
 );

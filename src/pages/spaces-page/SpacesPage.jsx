@@ -1,12 +1,11 @@
-import { useState } from "react"
 import GoalViewSetter from "./components/GoalViewSetter";
 import ListOfGoals from "./components/ListOfGoals";
+import { SpaceContextProvider } from "./helpers/Contexts";
 
 const SpacesPage = () => {
-    const [shouldDisplayCategories, setShouldDisplayCategories] = useState(false);
+    const currentSpaceId = 1
 
-    /*const space = 1
-
+    /* TODO: this would be used to display the list (selector) of spaces
     const { data: spaces } = useQuery({
         queryKey: ['spaces'],
         queryFn: () => getAllSpaces()
@@ -14,12 +13,10 @@ const SpacesPage = () => {
 
     return (<>
         <div className="md:max-w-[500px] md:mx-auto bg-light2 h-screen flex flex-col gap-3">
-            <GoalViewSetter
-                isCategoryView={shouldDisplayCategories}
-                setIsCategoryView={setShouldDisplayCategories}
-            />
-
-            <ListOfGoals shouldOrganizeByStatus={!shouldDisplayCategories} />
+            <SpaceContextProvider value={{ currentSpaceId }}>
+                <GoalViewSetter />
+                <ListOfGoals />
+            </SpaceContextProvider>
         </div>
     </>)
 }

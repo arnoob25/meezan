@@ -1,8 +1,12 @@
 import { useForm } from 'react-hook-form';
+import { AddGoalSchema } from '../helpers/FormSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { AddGoalSchema } from '../../helpers/FormSchemas';
+import { useGoalCollectionContext, useSpaceContext } from '../helpers/Contexts';
 
 const GoalCreationForm = () => {
+    const { currentSpaceId, selectedCategoryId, shouldDisplayCategories } = useSpaceContext()
+    const { collectionCriteria: { priority, status } } = useGoalCollectionContext()
+
     const { register, handleSubmit, formState: { errors } } = useForm({
         resolver: zodResolver(AddGoalSchema)
     });
@@ -12,11 +16,19 @@ const GoalCreationForm = () => {
      }) */
 
     const onSubmit = (data) => {
+        data = {
+            ...data,
+            currentSpaceId,
+            // category is null when creating goal from the 'Important Goals' - view
+            selectedCategoryId: shouldDisplayCategories ? selectedCategoryId : null,
+            priority: priority ? priority.trim() : '',
+            status: status ? status.trim() : ''
+        }
         console.log(data);
     };
 
     return (
-        <div>
+        <div className="w-full md:w-[25rem] bg-light1 p-5 rounded-lg flex flex-col gap-3 z-10">
             <h2>Create a New Goal</h2>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div>

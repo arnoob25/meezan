@@ -1,27 +1,19 @@
-import GoalCollectionCard from "./GoalCollectionCard"
 
-const listOfStatusTypes = [
-    { order: 1, title: 'In Progress', color: 'red' },
-    { order: 2, title: 'Next', color: 'yellow' },
-]
+import { useSpaceContext } from "../helpers/Contexts"
+import CategorizedGoals from "./CategorizedGoals"
+import ImportantGoals from "./ImportantGoals"
 
-const listOfPriorityLevels = [
-    { order: 1, title: 'Important', color: 'purple' },
-    { order: 2, title: 'Delay', color: 'green' },
-    { order: 3, title: 'Ignore', color: 'gray' },
-]
+const ListOfGoals = () => {
+    const { shouldDisplayCategories } = useSpaceContext()
 
-const ListOfGoals = ({ shouldOrganizeByStatus }) => {
-    if (shouldOrganizeByStatus) {
-        return (listOfStatusTypes.sort((a, b) => a.order - b.color).map(
-            statusType => <GoalCollectionCard key={statusType.order} criteria={statusType} />
-        ))
-    }
-
-    else { // organize by priority
-        return (listOfPriorityLevels.sort((a, b) => a.order - b.color).map(
-            priorityType => <GoalCollectionCard key={priorityType.order} criteria={priorityType} />
-        ))
-    }
+    return (
+        <div> {/* TODO: this should be a scrollable area */}
+            {shouldDisplayCategories
+                ? <CategorizedGoals />
+                : <ImportantGoals />
+            }
+        </div>
+    )
 }
+
 export default ListOfGoals
