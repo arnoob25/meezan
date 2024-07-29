@@ -1,4 +1,4 @@
-import { supabase } from "../../../QueryClient";
+import {supabase} from '../../../lib/QueryClient'
 
 
 // TODO: get rituals that haven't been completed yet

@@ -1,5 +1,6 @@
+import { supabase } from '../../../lib/QueryClient'
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from "../../../QueryClient";
+
 
 export const useCreateGoalMutation = () => {
     const queryClient = useQueryClient();
