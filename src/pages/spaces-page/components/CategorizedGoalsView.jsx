@@ -21,7 +21,7 @@ const CategorizedGoalsView = () => {
     return (listOfPriorityLevels.sort((a, b) => a.order - b.order)?.map(
         priorityLevel => (
             <GoalCollectionContextProvider key={priorityLevel.order} value={{ collectionCriteria: priorityLevel, goals }}>
-                <GoalCollectionCard />
+                <GoalCollectionCard id={`priority.${priorityLevel.order}`} /> {/* creates a unique id for each droppable element */}
             </GoalCollectionContextProvider>
         )
     ))

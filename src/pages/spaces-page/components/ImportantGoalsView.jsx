@@ -19,7 +19,7 @@ const ImportantGoalsView = () => {
     return (listOfStatusTypes.sort((a, b) => a.order - b.order)?.map(
         statusType => (
             <GoalCollectionContextProvider key={statusType.order} value={{ collectionCriteria: statusType, goals }}>
-                <GoalCollectionCard />
+                <GoalCollectionCard id={`status.${statusType.order}`} /> {/* creates a unique id for each droppable element */}
             </GoalCollectionContextProvider>
         )
     ))

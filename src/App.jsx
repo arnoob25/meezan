@@ -5,7 +5,7 @@ import TodayPage from './pages/today-page/TodayPage'
 function App() {
 
   return (
-    <div className="bg-light2 text-dark1 relative min-h-[100svh]"> {/* TODO: it should not be scrollable */}
+    <div className="bg-light2 text-dark1 min-h-[100svh] overflow-hidden"> {/* TODO: it should not be scrollable */}
       <SpacesPage />
     </div>
   )

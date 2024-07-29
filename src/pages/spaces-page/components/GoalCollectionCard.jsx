@@ -1,16 +1,15 @@
+import { useDroppable } from "@dnd-kit/core";
 import { useGoalCollectionContext, useSpaceContext } from "../helpers/Contexts";
 import GoalCard from "./GoalCard";
 import GoalCreationModal from './GoalCreationModal';
+import { SortableContext } from "@dnd-kit/sortable";
 
-const GoalCollectionCard = () => {
-    const { shouldDisplayCategories } = useSpaceContext();
-    const {
-        goals,
-        collectionCriteria: { title, priority, status },
-        setIsModalVisible,
-    } = useGoalCollectionContext()
-
+const GoalCollectionCard = ({ id }) => {
     let filteredGoals = [];
+    const { shouldDisplayCategories } = useSpaceContext();
+    const { goals, setIsModalVisible, collectionCriteria: { title, priority, status }, } = useGoalCollectionContext()
+
+    const { isOver, setNodeRef } = useDroppable({ id: id, data: { priority, status } })
 
     /* filter by criteria (status/ priority) */
     if (shouldDisplayCategories) {
@@ -32,8 +31,10 @@ const GoalCollectionCard = () => {
                 </div>
             </div>
 
-            <div className="rounded-lg flex flex-col gap-3">
-                {filteredGoals?.map(goal => <GoalCard key={goal.id} goal={goal} />)}
+            <div ref={setNodeRef} className={`rounded-lg border-2 flex flex-col gap-3 ${isOver ? 'border-black' : 'border-transparent'}`}>
+                <SortableContext items={filteredGoals ? filteredGoals : []}>
+                    {filteredGoals?.map(goal => <GoalCard key={goal.id} goal={goal} />)}
+                </SortableContext>
             </div>
 
             <GoalCreationModal />
