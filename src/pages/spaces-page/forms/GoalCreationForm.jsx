@@ -41,10 +41,11 @@ const GoalCreationForm = () => {
     return (
         <div className="w-full md:w-[25rem] bg-light1 p-5 rounded-lg flex flex-col gap-3 z-10">
             <h2>Create a New Goal</h2>
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form className="flex flex-col gap-3" onSubmit={handleSubmit(onSubmit)}>
                 <div>
-                    <label htmlFor="title">Goal Title</label>
+                    {/* <label htmlFor="title">Goal Title</label> */}
                     <input
+                        className="w-full bg-light2 px-4 py-2 rounded-lg"
                         type="text"
                         id="title"
                         {...register("title")}
@@ -54,18 +55,30 @@ const GoalCreationForm = () => {
                 </div>
 
                 <div>
-                    <label htmlFor="approach">Approach</label>
-                    <select {...register("approach")}>
-                        <option value="">Select an approach</option>
-                        <option value="asap">ASAP</option>
-                        <option value="laid_back">Laid Back</option>
+                    {/* <label htmlFor="duration">Duration (in minutes)</label> */}
+                    <input
+                        className="w-full bg-light2 px-4 py-2 rounded-lg"
+                        type="number"
+                        id="duration"
+                        {...register("duration", { valueAsNumber: true })}
+                        placeholder="Enter the duration in minutes"
+                    />
+                    {errors.duration && <p>{errors.duration.message}</p>}
+                </div>
+
+                <div>
+                    {/* <label htmlFor="approach">Approach</label> */}
+                    <select {...register("approach")} className="w-full bg-light2 px-3 py-2 rounded-lg cursor-pointer">
+                        <option className="bg-light1 rounded-lg p-4" value="">Select an approach</option>
+                        <option className="bg-light1 rounded-lg p-4" value="asap">ASAP</option>
+                        <option className="bg-light1 rounded-lg p-4" value="laid_back">Laid Back</option>
                     </select>
                     {errors.approach && <p>{errors.approach.message}</p>}
                 </div>
 
                 <div>
-                    <label htmlFor="timeWindow">Time Window</label>
-                    <select {...register("timeWindow")}>
+                    {/* <label htmlFor="timeWindow">Time Window</label> */}
+                    <select {...register("timeWindow")} className="w-full bg-light2 px-3 py-2 rounded-lg cursor-pointer">
                         <option value="">Time Window</option>
                         <option value="pre_fajr">Pre Fajr</option>
                         <option value="pre_duhr">Pre Duhr</option>
@@ -77,18 +90,11 @@ const GoalCreationForm = () => {
                     {errors.timeWindow && <p>{errors.timeWindow.message}</p>}
                 </div>
 
-                <div>
-                    <label htmlFor="duration">Duration (in minutes)</label>
-                    <input
-                        type="number"
-                        id="duration"
-                        {...register("duration", { valueAsNumber: true })}
-                        placeholder="Enter the duration in minutes"
-                    />
-                    {errors.duration && <p>{errors.duration.message}</p>}
-                </div>
-
-                <button type="submit" disabled={createGoalMutation.isLoading}>
+                <button 
+                    className="w-full bg-dark1 text-light1 font-semibold px-5 py-3 rounded-lg" 
+                    type="submit" 
+                    disabled={createGoalMutation.isLoading}
+                    >
                     {createGoalMutation.isLoading ? 'Creating...' : 'Create Goal'}
                 </button>
             </form>

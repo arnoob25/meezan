@@ -11,13 +11,13 @@ const SpacesPage = () => {
         queryFn: () => getAllSpaces()
     })*/
 
-    return (<>
-        <div className="md:max-w-[500px] md:mx-auto bg-light2 h-screen flex flex-col gap-3">
-            <SpaceContextProvider value={{ currentSpaceId }}>
+    return (
+        <>
+           <SpaceContextProvider value={{ currentSpaceId }}>
                 <GoalViewSetter />
                 <ListOfGoals />
             </SpaceContextProvider>
-        </div>
-    </>)
+        </>
+    )
 }
 export default SpacesPage

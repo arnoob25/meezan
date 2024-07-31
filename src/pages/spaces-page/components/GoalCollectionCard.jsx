@@ -1,3 +1,4 @@
+import { Icon } from "@iconify-icon/react/dist/iconify.js";
 import { useDroppable } from "@dnd-kit/core";
 import { useGoalCollectionContext, useSpaceContext } from "../helpers/Contexts";
 import GoalCard from "./GoalCard";
@@ -27,7 +28,7 @@ const GoalCollectionCard = ({ id }) => {
                     className="bg-light2 size-7 rounded-full flex justify-center items-center cursor-pointer"
                     onClick={() => setIsModalVisible(true)}
                 >
-                    +
+                    <Icon icon="hugeicons:plus-sign"/>
                 </div>
             </div>
 

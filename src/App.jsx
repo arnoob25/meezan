@@ -1,14 +1,15 @@
 import './App.css'
-import SpacesPage from './pages/spaces-page/SpacesPage'
-import TodayPage from './pages/today-page/TodayPage'
+import MainPage from './pages/main-page/MainPage';
+import SpacesPage from './pages/spaces-page/SpacesPage';
+import TodayPage from './pages/today-page/TodayPage';
 
 function App() {
 
-  return (
-    <div className="bg-light2 text-dark1 min-h-[100svh] overflow-hidden"> {/* TODO: it should not be scrollable */}
-      <SpacesPage />
-    </div>
-  )
+    return (
+        <div className="bg-light2 text-dark1 relative h-screen"> {/* TODO: it should not be scrollable */}
+            <MainPage/>
+        </div>
+    )
 }
 
 export default App
