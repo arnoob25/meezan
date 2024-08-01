@@ -4,15 +4,6 @@ import { useGoalCollectionContext, useSpaceContext } from "../helpers/Contexts";
 import GoalCard from "./GoalCard";
 import GoalCreationModal from './GoalCreationModal';
 import { SortableContext } from "@dnd-kit/sortable";
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog"
-
 
 const GoalCollectionCard = ({ id }) => {
     let filteredGoals = [];
@@ -32,19 +23,13 @@ const GoalCollectionCard = ({ id }) => {
         <div className="bg-light1 rounded-lg p-3 mx-3">
             <div className="flex justify-between items-end mb-2">
                 <div className="title text-xs">{title}</div>
-                <Dialog>
-                    <DialogTrigger>
-                        <div
-                            className="bg-light2 size-7 rounded-full flex justify-center items-center cursor-pointer"
-                        // onClick={() => setIsModalVisible(true)}
-                        >
-                            <Icon icon="hugeicons:plus-sign" />
-                        </div>
-                    </DialogTrigger>
-                    <DialogContent>
-                        <GoalCreationModal />
-                    </DialogContent>
-                </Dialog>
+
+                <div
+                    className="bg-light2 size-7 rounded-full flex justify-center items-center cursor-pointer"
+                    onClick={() => setIsModalVisible(true)}
+                >
+                    <Icon icon="hugeicons:plus-sign"/>
+                </div>
             </div>
 
             <div ref={setNodeRef} className={`rounded-lg border-2 flex flex-col gap-3 ${isOver ? 'border-black' : 'border-transparent'}`}>
@@ -53,6 +38,7 @@ const GoalCollectionCard = ({ id }) => {
                 </SortableContext>
             </div>
 
+            <GoalCreationModal />
         </div>
     );
 };

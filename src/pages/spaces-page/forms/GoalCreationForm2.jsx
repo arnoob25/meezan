@@ -39,7 +39,7 @@ const GoalCreationForm = () => {
     };
 
     return (
-        <div className="w-full flex flex-col gap-3">
+        <div className="w-full md:w-[25rem] bg-light1 p-5 rounded-lg flex flex-col gap-3 z-10">
             <h2>Create a New Goal</h2>
             <form className="flex flex-col gap-3" onSubmit={handleSubmit(onSubmit)}>
                 <div>
