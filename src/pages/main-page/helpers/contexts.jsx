@@ -1,5 +1,6 @@
 import { createContext, useContext, useState } from "react";
 
+// #region main context
 const MainContext = createContext();
 
 export const MainContextProvider = ({ children }) => {
@@ -14,6 +15,7 @@ export const MainContextProvider = ({ children }) => {
     <MainContext.Provider value={context}>{children}</MainContext.Provider>
   );
 };
+// #endregion
 
 export default function useMainPageContext() {
   return useContext(MainContext);
