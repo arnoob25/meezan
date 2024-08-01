@@ -42,7 +42,7 @@ const GoalCard = ({ goal }) => {
             style={{ transform: CSS.Translate.toString(transform)/* , transition  */}}
             {...listeners}
             {...attributes}
-            className="task bg-[#ffffff] text-sm text-left px-3 py-2 rounded-lg"
+            className="goal bg-light2 text-sm text-left px-3 py-2 rounded-lg"
         >
             <div className="goal-name font-semibold">{goal.title}</div>
             <div className="goal-duration text-sm">

@@ -37,7 +37,7 @@ const CategoryViewActivator = ({ onClick }) => (
         className="bg-light1 text-lg rounded-full size-10 flex justify-center items-center"
         onClick={onClick}
     >
-        <Icon icon="hugeicons:alert-circle"/>
+        <Icon icon="hugeicons:dashboard-square-03" />
     </button>
 );
 
@@ -46,7 +46,7 @@ const CategoryViewDeactivator = ({ onClick }) => (
         className="bg-light1 text-lg rounded-full size-10 flex justify-center items-center"
         onClick={onClick}
     >
-        <Icon icon="hugeicons:dashboard-square-03"/>
+        <Icon icon="hugeicons:alert-circle" />
     </button>
 );
 
@@ -58,7 +58,7 @@ const CategoryCreationButton = () => {
             className="bg-light2 size-7 rounded-full flex justify-center items-center cursor-pointer"
             onClick={() => setIsModalVisible(true)}
         >
-            <Icon icon="hugeicons:plus-sign"/>
+            <Icon icon="hugeicons:plus-sign" />
         </div>
         <CategoryCreationModal isModalVisible={isModalVisible} setIsModalVisible={setIsModalVisible} />
     </>)
