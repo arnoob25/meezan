@@ -2,11 +2,13 @@ import { supabase } from '../../../lib/QueryClient'
 
 export const handleGoogleSignin = async ()=>{
     try {
-        const {user,session,error} = await supabase.auth.signInWithOAuth(
-            {
-                provider:'google',
-            }
-        );
+        const {user,session,error} = await supabase.auth.signInWithOAuth({
+            provider:'google',
+            options: {
+              redirectTo: `http://localhost:5173/auth/callback`,
+            },
+          })
+          
         if (error) {
             console.error('Error signing in with Google: ',error.message)
         }else{
