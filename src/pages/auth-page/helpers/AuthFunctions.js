@@ -4,9 +4,6 @@ export const handleGoogleSignin = async ()=>{
     try {
         const {user,session,error} = await supabase.auth.signInWithOAuth({
             provider:'google',
-            options: {
-              redirectTo: `http://localhost:5173/auth/callback`,
-            },
           })
           
         if (error) {
@@ -14,10 +11,14 @@ export const handleGoogleSignin = async ()=>{
         }else{
             console.log('User: ',user),
             console.log('Session: ',session)
-            return {user,session}
         }
     } catch (error) {
-console.error('Unexpeced error occured signing in Google: ',error);     
-return null;   
+console.error('Unexpeced error occured signing in Google: ',error);  
     }
+}
+
+
+export const signOut = async()=>{
+    const { error } = await supabase.auth.signOut()
+    throw error
 }
