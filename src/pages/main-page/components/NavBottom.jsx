@@ -1,5 +1,5 @@
 import { Icon } from "@iconify-icon/react/dist/iconify.js";
-import useMainPageContext from "../../main-page/helpers/contexts";
+import useMainPageContext from "../helpers/contexts";
 
 const NavBottom = () => {
     const { activeView, setActiveView } = useMainPageContext()

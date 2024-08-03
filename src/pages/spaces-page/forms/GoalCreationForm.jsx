@@ -3,6 +3,14 @@ import { CreateGoalSchema } from '../helpers/FormSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useGoalCollectionContext, useSpaceContext } from '../helpers/Contexts';
 import { useCreateGoalMutation } from '../helpers/MutationFunctions';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
+
 
 const GoalCreationForm = () => {
     const { currentSpaceId, selectedCategoryId, shouldDisplayCategories } = useSpaceContext()
@@ -28,7 +36,7 @@ const GoalCreationForm = () => {
             approach: data.approach,
             time_window: data.timeWindow,
         };
-        
+
         createGoalMutation.mutate(newGoal, {
             onSuccess: () => {
                 console.log('Goal created successfully');
@@ -40,10 +48,8 @@ const GoalCreationForm = () => {
 
     return (
         <div className="w-full flex flex-col gap-3">
-            <h2>Create a New Goal</h2>
             <form className="flex flex-col gap-3" onSubmit={handleSubmit(onSubmit)}>
                 <div>
-                    {/* <label htmlFor="title">Goal Title</label> */}
                     <input
                         className="w-full bg-light2 px-4 py-2 rounded-lg"
                         type="text"
@@ -55,7 +61,6 @@ const GoalCreationForm = () => {
                 </div>
 
                 <div>
-                    {/* <label htmlFor="duration">Duration (in minutes)</label> */}
                     <input
                         className="w-full bg-light2 px-4 py-2 rounded-lg"
                         type="number"
@@ -66,35 +71,37 @@ const GoalCreationForm = () => {
                     {errors.duration && <p>{errors.duration.message}</p>}
                 </div>
 
-                <div>
-                    {/* <label htmlFor="approach">Approach</label> */}
-                    <select {...register("approach")} className="w-full bg-light2 px-3 py-2 rounded-lg cursor-pointer">
-                        <option className="bg-light1 rounded-lg p-4" value="">Select an approach</option>
-                        <option className="bg-light1 rounded-lg p-4" value="asap">ASAP</option>
-                        <option className="bg-light1 rounded-lg p-4" value="laid_back">Laid Back</option>
-                    </select>
+                <Select {...register("approach")}>
+                    <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select an approach" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="ASAP">ASAP</SelectItem>
+                        <SelectItem value="Laid Back">Laid Back</SelectItem>
+                    </SelectContent>
                     {errors.approach && <p>{errors.approach.message}</p>}
-                </div>
+                </Select>
 
-                <div>
-                    {/* <label htmlFor="timeWindow">Time Window</label> */}
-                    <select {...register("timeWindow")} className="w-full bg-light2 px-3 py-2 rounded-lg cursor-pointer">
-                        <option value="">Time Window</option>
-                        <option value="pre_fajr">Pre Fajr</option>
-                        <option value="pre_duhr">Pre Duhr</option>
-                        <option value="pre_asr">Pre Asr</option>
-                        <option value="pre_maghrib">Pre Maghrib</option>
-                        <option value="pre_isha">Pre Isha</option>
-                        <option value="post_isha">Post Isha</option>
-                    </select>
+                <Select {...register("timeWindow")}>
+                    <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Time Window" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="Pre Fajr">Pre Fajr</SelectItem>
+                        <SelectItem value="Pre Duhr">Pre Duhr</SelectItem>
+                        <SelectItem value="Pre Asr">Pre Asr</SelectItem>
+                        <SelectItem value="Pre Maghrib">Pre Maghrib</SelectItem>
+                        <SelectItem value="Pre Isha">Pre Isha</SelectItem>
+                        <SelectItem value="Post Isha">Post Isha</SelectItem>
+                    </SelectContent>
                     {errors.timeWindow && <p>{errors.timeWindow.message}</p>}
-                </div>
+                </Select>
 
-                <button 
-                    className="w-full bg-dark1 text-light1 font-semibold px-5 py-3 rounded-lg" 
-                    type="submit" 
+                <button
+                    className="w-full bg-dark1 text-light1 font-semibold px-5 py-3 rounded-lg"
+                    type="submit"
                     disabled={createGoalMutation.isLoading}
-                    >
+                >
                     {createGoalMutation.isLoading ? 'Creating...' : 'Create Goal'}
                 </button>
             </form>

@@ -3,7 +3,7 @@ import { createContext, useContext, useState } from "react";
 const MainContext = createContext();
 
 export const MainContextProvider = ({ children }) => {
-  const [activeView, setActiveView] = useState(true);
+  const [activeView, setActiveView] = useState(false);
 
   const context = {
     activeView,

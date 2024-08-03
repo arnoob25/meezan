@@ -2,8 +2,6 @@ import { useDndMonitor, useDraggable } from "@dnd-kit/core";
 import { CSS } from '@dnd-kit/utilities';
 import { useUpdateGoalPriorityMutation, useUpdateGoalStatusMutation } from "../helpers/MutationFunctions";
 import { useSpaceContext } from "../helpers/Contexts";
-import { useSortable } from "@dnd-kit/sortable";
-
 
 const GoalCard = ({ goal }) => {
     const { shouldDisplayCategories } = useSpaceContext()

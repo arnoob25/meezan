@@ -28,32 +28,50 @@ const ModalSpaces = () => {
                     </button>
                 </div>
                 <div className="flex flex-col max-h-[70svh] overflow-y-scroll">
-                    <button className="text-left font-semibold bg-light2 px-5 py-4 flex justify-between items-center gap-3">
-                        Learning
-                        <div className="flex items-center gap-3">
-                            <button className="bg-light1 rounded-full size-7 flex justify-center items-center">
-                                <Icon icon="hugeicons:pencil-edit-02" />
-                            </button>
-                            <button className="bg-light1 rounded-full size-7 flex justify-center items-center">
-                                <Icon icon="hugeicons:delete-03" />
-                            </button>
-                        </div>
-                    </button>
-                    <button className="text-left font-semibold px-5 py-4 flex justify-between items-center gap-3">
-                        Exercise
-                        <div className="flex items-center gap-3">
-                            <button className="bg-light2 rounded-full size-7 flex justify-center items-center">
-                                <Icon icon="hugeicons:pencil-edit-02" />
-                            </button>
-                            <button className="bg-light2 rounded-full size-7 flex justify-center items-center">
-                                <Icon icon="hugeicons:delete-03" />
-                            </button>
-                        </div>
-                    </button>
+                    {/* TODO: 
+                        Connect the database here
+                        Combine these in one item
+                        Using the index numbers, make the background, button colors switch
+                        Create dialog boxes for edit and delete buttons
+                    */}
+                    <ModalSpacesItemOdd />
+                    <ModalSpacesItemEven />
                 </div>
             </DrawerContent>
         </Drawer>
     );
 };
 
+
 export default ModalSpaces;
+const ModalSpacesItemOdd = () => {
+    return (
+        <button className="text-left font-semibold bg-light2 px-5 py-4 flex justify-between items-center gap-3">
+            Learning
+            <div className="flex items-center gap-3">
+                <button className="bg-light1 rounded-full size-7 flex justify-center items-center">
+                    <Icon icon="hugeicons:pencil-edit-02" />
+                </button>
+                <button className="bg-light1 rounded-full size-7 flex justify-center items-center">
+                    <Icon icon="hugeicons:delete-03" />
+                </button>
+            </div>
+        </button>
+    )
+}
+
+const ModalSpacesItemEven = () => {
+    return (
+        <button className="text-left font-semibold px-5 py-4 flex justify-between items-center gap-3">
+            Exercise
+            <div className="flex items-center gap-3">
+                <button className="bg-light2 rounded-full size-7 flex justify-center items-center">
+                    <Icon icon="hugeicons:pencil-edit-02" />
+                </button>
+                <button className="bg-light2 rounded-full size-7 flex justify-center items-center">
+                    <Icon icon="hugeicons:delete-03" />
+                </button>
+            </div>
+        </button>
+    )
+}

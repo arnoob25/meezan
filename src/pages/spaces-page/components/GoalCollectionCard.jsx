@@ -36,12 +36,12 @@ const GoalCollectionCard = ({ id }) => {
                     <DialogTrigger>
                         <div
                             className="bg-light2 size-7 rounded-full flex justify-center items-center cursor-pointer"
-                        // onClick={() => setIsModalVisible(true)}
                         >
                             <Icon icon="hugeicons:plus-sign" />
                         </div>
                     </DialogTrigger>
                     <DialogContent>
+                        <DialogTitle>Create a New goal</DialogTitle>
                         <GoalCreationModal />
                     </DialogContent>
                 </Dialog>
