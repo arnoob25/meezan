@@ -1,9 +1,13 @@
+import useMainPageContext from "../main-page/helpers/contexts";
 import GoalViewSetter from "./components/GoalViewSetter";
 import ListOfGoals from "./components/ListOfGoals";
+import ModalSpaces from "./components/ModalSpaces";
 import { SpaceContextProvider } from "./helpers/Contexts";
 
 const SpacesPage = () => {
     const currentSpaceId = 1
+
+    const { activeView, setActiveView } = useMainPageContext()
 
     /* TODO: this would be used to display the list (selector) of spaces
     const { data: spaces } = useQuery({
@@ -11,13 +15,14 @@ const SpacesPage = () => {
         queryFn: () => getAllSpaces()
     })*/
 
-    return (<>
-        <div className="md:max-w-[500px] md:mx-auto bg-light2 h-screen flex flex-col gap-3">
+    return (
+        <div className={`flex flex-col gap-3 flex-1 overflow-hidden ${activeView ? "" : "hidden"}`}>
+            <ModalSpaces/>
             <SpaceContextProvider value={{ currentSpaceId }}>
                 <GoalViewSetter />
                 <ListOfGoals />
             </SpaceContextProvider>
         </div>
-    </>)
+    )
 }
 export default SpacesPage
