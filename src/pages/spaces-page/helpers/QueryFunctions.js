@@ -1,4 +1,4 @@
-import {supabase} from '../../../lib/QueryClient'
+import { supabase } from '../../../lib/QueryClient'
 
 
 // TODO: get rituals that haven't been completed yet
@@ -17,10 +17,25 @@ export async function getCurrentDayRituals(day, period) {
     return rituals;
 }
 
+export async function getSelectedSpace(space_id) {
+    let { data: spaces, error } = await supabase
+        .from('spaces')
+        .select("*")
+        .eq('id', space_id)
+
+    if (error) {
+        console.error("Error fetching spaces:", error);
+        return [];
+    }
+
+    return spaces[0];
+}
+
 export async function getAllSpaces() {
     let { data: spaces, error } = await supabase
         .from('space')
         .select('*')
+
     if (error) {
         console.log('Error fetching spaces:', error);
         return []

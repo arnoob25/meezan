@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useSpaceContext } from "../helpers/Contexts";
-import { getAllCategoriesForASpace } from "../helpers/QueryFunctions";
+import { getAllCategoriesForASpace } from "../helpers/queryFunctions";
 
 const CategoryTabs = () => {
     const { currentSpaceId, setSelectedCategoryId } = useSpaceContext()

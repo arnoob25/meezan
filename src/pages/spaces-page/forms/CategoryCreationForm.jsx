@@ -1,8 +1,8 @@
 import { useForm } from 'react-hook-form';
-import { CreateCategorySchema } from '../helpers/FormSchema';
+import { CreateCategorySchema } from '../helpers/formSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useSpaceContext } from '../helpers/Contexts';
-import { useCreateCategoryMutation } from '../helpers/MutationFunctions';
+import { useCreateCategoryMutation } from '../helpers/mutationFunctions';
 
 const CategoryCreationForm = ({ hideModal }) => {
     const { currentSpaceId } = useSpaceContext()

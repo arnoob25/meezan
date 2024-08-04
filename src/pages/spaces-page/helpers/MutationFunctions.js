@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { supabase } from '../../../lib/QueryClient'
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
@@ -70,6 +71,38 @@ export const useUpdateGoalPriorityMutation = () => {
         onSuccess: (newGoal) => {
             // Invalidate and refetch relevant queries
             queryClient.invalidateQueries(['goals']);
+        },
+        onError: (error) => {
+            // TODO: show a toast notification
+            console.error('Error updating goal:', error);
+        },
+    });
+};
+
+const debouncedUpdate = _.debounce(
+    async ({ space_id, field, sorted_goal_ids }) => {
+        const { data, error } = await supabase
+            .from('spaces')
+            .update({ [field]: [...sorted_goal_ids] })
+            .eq('id', space_id)
+            .select();
+
+        if (error) throw error;
+
+        return data[0];
+    },
+    1000
+);
+
+export const useUpdateGoalStatusOrderMutation = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async (args) => debouncedUpdate(args),
+        
+        onSuccess: () => {
+            // Invalidate and refetch relevant queries
+            queryClient.invalidateQueries(['spaces']);
         },
         onError: (error) => {
             // TODO: show a toast notification

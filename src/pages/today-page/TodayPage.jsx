@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
-import { getCurrentDayRituals } from "../spaces-page/helpers/QueryFunctions"
+import { getCurrentDayRituals } from "../spaces-page/helpers/queryFunctions"
 
 const TodayPage = () => {
     // TODO: determine day from date

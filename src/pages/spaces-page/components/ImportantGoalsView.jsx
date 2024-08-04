@@ -1,25 +1,27 @@
 import { useQuery } from "@tanstack/react-query"
 import GoalCollectionCard from "./GoalCollectionCard"
-import { getAllImportantGoalsWithinASpace } from "../helpers/QueryFunctions"
+import { getAllImportantGoalsWithinASpace } from "../helpers/queryFunctions"
 import { GoalCollectionContextProvider, useSpaceContext } from "../helpers/Contexts"
+import { LIST_OF_STATUS_TYPES } from "../helpers/enums"
 
-const listOfStatusTypes = [
-    { order: 1, title: 'In Progress', status: 'in_progress', color: 'red' },
-    { order: 2, title: 'Next', status: 'next', color: 'yellow' },
-]
 
 const ImportantGoalsView = () => {
-    const { currentSpaceId } = useSpaceContext()
+    const { currentSpace } = useSpaceContext()
+    const currentSpaceId = currentSpace?.id
 
     const { data: goals } = useQuery({
         queryKey: ['goals', currentSpaceId],
-        queryFn: () => getAllImportantGoalsWithinASpace(currentSpaceId)
+        queryFn: () => getAllImportantGoalsWithinASpace(currentSpaceId),
+        enabled: !!currentSpaceId
     })
 
-    return (listOfStatusTypes.sort((a, b) => a.order - b.order)?.map(
-        statusType => (
-            <GoalCollectionContextProvider key={statusType.order} value={{ collectionCriteria: statusType, goals }}>
-                <GoalCollectionCard id={`status.${statusType.order}`} /> {/* creates a unique id for each droppable element */}
+    return (LIST_OF_STATUS_TYPES?.map(
+        (statusType, index) => (
+            <GoalCollectionContextProvider
+                key={index}
+                value={{ collectionCriteria: statusType, allGoals: goals || [] }}
+            >
+                <GoalCollectionCard />
             </GoalCollectionContextProvider>
         )
     ))

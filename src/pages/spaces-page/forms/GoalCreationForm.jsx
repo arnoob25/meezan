@@ -1,11 +1,11 @@
 import { useForm } from 'react-hook-form';
-import { CreateGoalSchema } from '../helpers/FormSchema';
+import { CreateGoalSchema } from '../helpers/formSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useGoalCollectionContext, useSpaceContext } from '../helpers/Contexts';
-import { useCreateGoalMutation } from '../helpers/MutationFunctions';
+import { useCreateGoalMutation } from '../helpers/mutationFunctions';
 
 const GoalCreationForm = () => {
-    const { currentSpaceId, selectedCategoryId, shouldDisplayCategories } = useSpaceContext()
+    const { currentSpaceId, selectedCategoryId, isCategoryViewSelected } = useSpaceContext()
     const { collectionCriteria: { priority, status }, setIsModalVisible } = useGoalCollectionContext()
 
     const { register, handleSubmit, formState: { errors }, reset } = useForm({
@@ -19,10 +19,10 @@ const GoalCreationForm = () => {
             title: data.title,
             space_id: currentSpaceId,
             // category is null when creating goal from the 'Important Goals' - view
-            category_id: shouldDisplayCategories ? selectedCategoryId : null,
+            category_id: isCategoryViewSelected ? selectedCategoryId : null,
             priority: (priority
                 ? priority.trim()
-                : shouldDisplayCategories ? 'delay' : 'important'),
+                : isCategoryViewSelected ? 'delay' : 'important'),
             status: status ? status.trim() : 'next',
             duration: data.duration,
             approach: data.approach,

@@ -1,54 +1,57 @@
-import { useDndMonitor, useDraggable } from "@dnd-kit/core";
 import { CSS } from '@dnd-kit/utilities';
-import { useUpdateGoalPriorityMutation, useUpdateGoalStatusMutation } from "../helpers/MutationFunctions";
-import { useSpaceContext } from "../helpers/Contexts";
 import { useSortable } from "@dnd-kit/sortable";
+import { DRAG_AND_DROP_COMPONENT_TYPES } from '../helpers/enums';
+import { useGoalCollectionContext } from '../helpers/Contexts';
 
 
 const GoalCard = ({ goal }) => {
-    const { shouldDisplayCategories } = useSpaceContext()
-    const updateGoalStatusMutation = useUpdateGoalStatusMutation()
-    const updateGoalPriorityMutation = useUpdateGoalPriorityMutation()
+    const {
+        goalPositions,
+        collectionCriteria,
+    } = useGoalCollectionContext()
 
-    const { attributes, listeners, setNodeRef, transform } = useDraggable({
-        id: `goal.${goal.id}`,
-    });
-
-    /* const {
+    const {
         attributes,
         listeners,
         setNodeRef,
         transform,
         transition,
-    } = useSortable({ id: `goal.${goal.id}`, }); */
-
-    useDndMonitor({
-        onDragEnd(event) {
-            if (event.active.id === `goal.${goal.id}`) {
-                if (shouldDisplayCategories) {
-                    const priority = event.over.data.current.priority
-                    updateGoalPriorityMutation.mutate({ id: goal.id, priority })
-                } else {
-                    const status = event.over.data.current.status
-                    updateGoalStatusMutation.mutate({ id: goal.id, status })
-                }
+        isDragging,
+    } = useSortable({
+        id: goal.id,
+        data: {
+            type: DRAG_AND_DROP_COMPONENT_TYPES.goalCard,
+            goal,
+            category: {
+                status: collectionCriteria.status,
+                priority: collectionCriteria.priority,
+                goalPositions,
             }
         }
-    })
+    });
+
+    const style = { transform: CSS.Translate.toString(transform), transition }
+
+
+    /* if (isDragging) {
+        return (
+            <div ref={setNodeRef} style={style} className="bg-black opacity-10 h-12 rounded-sm"></div>
+        )
+    } */
 
     return (
         <div
             ref={setNodeRef}
-            style={{ transform: CSS.Translate.toString(transform)/* , transition  */}}
             {...listeners}
             {...attributes}
-            className="task bg-[#ffffff] text-sm text-left px-3 py-2 rounded-lg"
+            style={style}
+            className="bg-[#ffffff] text-sm text-left px-3 py-2 rounded-lg"
         >
-            <div className="goal-name font-semibold">{goal.title}</div>
-            <div className="goal-duration text-sm">
+            <div className="font-semibold">{goal.title}</div>
+            <div className="text-sm">
                 {goal.duration}
             </div>
-            <div className="goal-time text-sm">{goal.period}</div>
+            <div className="text-sm">{goal.period}</div>
         </div>
     );
 };
