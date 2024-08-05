@@ -4,7 +4,7 @@ import GoalCard from "./GoalCard";
 import GoalCreationModal from './GoalCreationModal';
 import { arrayMove, SortableContext } from "@dnd-kit/sortable";
 import { useDndMonitor } from "@dnd-kit/core";
-import { useUpdateGoalStatusOrderMutation } from "../helpers/mutationFunctions";
+import { useUpdateGoalStatusOrderMutation } from "../helpers/mutationHooks";
 
 const GoalCollectionCard = () => {
     const { currentSpace, isCategoryViewSelected } = useSpaceContext()
@@ -20,7 +20,7 @@ const GoalCollectionCard = () => {
 
     useDndMonitor({
         onDragOver(event) {
-            const { active, over } = event
+            const { active, over } = event           
 
             if (!over) return
 
@@ -39,7 +39,7 @@ const GoalCollectionCard = () => {
                 })
             }
 
-            if (over.data.current.category.status === collectionCriteria.status) {
+            /* if (over.data.current.category.status === collectionCriteria.status) {
                 const isActiveGoalFromDifferentCategory = !goals.some(goal => goal.id === active.id)
                 if (!isActiveGoalFromDifferentCategory) return
 
@@ -47,7 +47,7 @@ const GoalCollectionCard = () => {
                     ...prevGoals,
                     active.data.current.goal
                 ]))
-            }
+            } */
 
             updateSortedGoalIds.mutate({
                 space_id: currentSpace.id,

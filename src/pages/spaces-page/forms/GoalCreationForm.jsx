@@ -2,7 +2,7 @@ import { useForm } from 'react-hook-form';
 import { CreateGoalSchema } from '../helpers/formSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useGoalCollectionContext, useSpaceContext } from '../helpers/Contexts';
-import { useCreateGoalMutation } from '../helpers/mutationFunctions';
+import { useCreateGoalMutation } from '../helpers/mutationHooks';
 
 const GoalCreationForm = () => {
     const { currentSpaceId, selectedCategoryId, isCategoryViewSelected } = useSpaceContext()

@@ -64,7 +64,6 @@ export const useUpdateGoalPriorityMutation = () => {
                 .eq('id', id)
                 .select()
 
-
             if (error) throw error;
             return data[0];
         },
@@ -88,7 +87,7 @@ const debouncedUpdate = _.debounce(
             .select();
 
         if (error) throw error;
-
+        
         return data[0];
     },
     1000
@@ -99,7 +98,7 @@ export const useUpdateGoalStatusOrderMutation = () => {
 
     return useMutation({
         mutationFn: async (args) => debouncedUpdate(args),
-        
+
         onSuccess: () => {
             // Invalidate and refetch relevant queries
             queryClient.invalidateQueries(['spaces']);
