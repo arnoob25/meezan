@@ -1,12 +1,13 @@
 import { useForm } from 'react-hook-form';
 import { CreateGoalSchema } from '../helpers/formSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useGoalCollectionContext, useSpaceContext } from '../helpers/Contexts';
+import { useGoalCollectionContext, useGoalCreationModalContext, useSpaceContext } from '../helpers/Contexts';
 import { useCreateGoalMutation } from '../helpers/mutationHooks';
 
 const GoalCreationForm = () => {
+    const { collectionCriteria: { priority, status } } = useGoalCollectionContext()
     const { currentSpaceId, selectedCategoryId, isCategoryViewSelected } = useSpaceContext()
-    const { collectionCriteria: { priority, status }, setIsModalVisible } = useGoalCollectionContext()
+    const { setIsModalVisible } = useGoalCreationModalContext()
 
     const { register, handleSubmit, formState: { errors }, reset } = useForm({
         resolver: zodResolver(CreateGoalSchema)
@@ -28,7 +29,7 @@ const GoalCreationForm = () => {
             approach: data.approach,
             time_window: data.timeWindow,
         };
-        
+
         createGoalMutation.mutate(newGoal, {
             onSuccess: () => {
                 console.log('Goal created successfully');
@@ -90,11 +91,11 @@ const GoalCreationForm = () => {
                     {errors.timeWindow && <p>{errors.timeWindow.message}</p>}
                 </div>
 
-                <button 
-                    className="w-full bg-dark1 text-light1 font-semibold px-5 py-3 rounded-lg" 
-                    type="submit" 
+                <button
+                    className="w-full bg-dark1 text-light1 font-semibold px-5 py-3 rounded-lg"
+                    type="submit"
                     disabled={createGoalMutation.isLoading}
-                    >
+                >
                     {createGoalMutation.isLoading ? 'Creating...' : 'Create Goal'}
                 </button>
             </form>

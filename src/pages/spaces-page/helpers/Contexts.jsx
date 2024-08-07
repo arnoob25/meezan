@@ -1,12 +1,15 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { COLLECTION_METHODS } from "./enums";
-import { reorderGoals } from "./utils";
+import { createContext, useContext, useState } from "react";
+import { useQueryAndSetAllGoals } from "./hooks";
+
+const SpaceContext = createContext();
+const GoalListContext = createContext()
+const GoalCreationModalContext = createContext()
+const GoalCollectionContext = createContext()
+
 
 // #region space context
-const SpaceContext = createContext();
-
 export const SpaceContextProvider = ({ children, value }) => {
   const [isCategoryViewSelected, setIsCategoryViewSelected] = useState(false);
   const [selectedCategoryId, setSelectedCategoryId] = useState(1);
@@ -21,60 +24,43 @@ export const SpaceContextProvider = ({ children, value }) => {
 
   return <SpaceContext.Provider value={context}>{children}</SpaceContext.Provider>;
 };
-
-export const useSpaceContext = () => useContext(SpaceContext);
 // #endregion
 
 
-// #region goal collection context
-const GoalCollectionContext = createContext()
-
-// TODO: create separate contexts for managing the goals and the modal state
-export const GoalCollectionContextProvider = ({ children, value }) => {
-  const { allGoals, collectionCriteria } = value;
-  const { status, priority, fieldName } = collectionCriteria
-
+// #region goal contexts
+const GoalCreationModalContextProvider = ({ children }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [goals, setGoals] = useState([]);
-
-  const { isCategoryViewSelected, currentSpace } = useSpaceContext();
-  let collectionMethod = COLLECTION_METHODS.status;
-  let goalFilter = status;
-
-  if (isCategoryViewSelected) {
-    collectionMethod = COLLECTION_METHODS.priority;
-    goalFilter = priority;
-  }
-
-  const filteredGoals = useMemo(() => {
-    return allGoals?.filter(goal => goal[collectionMethod] === goalFilter);
-  }, [allGoals, collectionMethod, goalFilter]);
-
-  useEffect(() => {
-    if (currentSpace && collectionMethod === COLLECTION_METHODS.status) {
-      const orderedGoals = reorderGoals(filteredGoals, currentSpace[fieldName]);
-      setGoals(orderedGoals);
-    } else {
-      setGoals(filteredGoals);
-    }
-  }, [filteredGoals, currentSpace, goalFilter, collectionMethod, fieldName]);
-
-  const context = {
-    goals,
-    setGoals,
-    collectionMethod,
-    goalPositions: goals?.map(goal => goal.id) || [],
-    isModalVisible,
-    setIsModalVisible,
-    ...value,
-  };
 
   return (
-    <GoalCollectionContext.Provider value={context}>
+    <GoalCreationModalContext.Provider value={{ isModalVisible, setIsModalVisible }}>
       {children}
-    </GoalCollectionContext.Provider>
+    </GoalCreationModalContext.Provider>
+  )
+}
+
+export const GoalListContextProvider = ({ children, value }) => {
+  const [allGoals, setAllGoals] = useState([]);
+
+  useQueryAndSetAllGoals(setAllGoals)
+
+  return (
+    <GoalListContext.Provider value={{ allGoals, setAllGoals, ...value }}>
+      <GoalCreationModalContextProvider>
+        {children}
+      </GoalCreationModalContextProvider>
+    </GoalListContext.Provider>
   );
 };
 
-export const useGoalCollectionContext = () => useContext(GoalCollectionContext)
+export const GoalCollectionContextProvider = ({ children, value }) => (
+  <GoalCollectionContext.Provider value={{ ...value }}>
+    {children}
+  </GoalCollectionContext.Provider>
+)
 // #endregion
+
+
+export const useSpaceContext = () => useContext(SpaceContext)
+export const useGoalListContext = () => useContext(GoalListContext)
+export const useGoalCreationModalContext = () => useContext(GoalCreationModalContext)
+export const useGoalCollectionContext = () => useContext(GoalCollectionContext)

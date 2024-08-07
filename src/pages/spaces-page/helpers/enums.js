@@ -3,15 +3,12 @@ export const COLLECTION_METHODS = {
     priority: 'priority'
 }
 
-export const LIST_OF_STATUS_TYPES = [
-    { title: 'In Progress', status: 'in_progress', color: 'red', fieldName: 'in_progress_sorted_goal_ids' },
-    { title: 'Next', status: 'next', color: 'yellow', fieldName: 'next_sorted_goal_ids' },
-]
-
-export const LIST_OF_PRIORITY_LEVELS = [
-    { title: 'Important', priority: 'important', color: 'purple' },
-    { title: 'Delay', priority: 'delay', color: 'green' },
-    { title: 'Ignore', priority: 'ignore', color: 'gray' },
+export const COLLECTION_CRITERIA = [
+    { id: 1, criteria: 'in_progress', method: COLLECTION_METHODS.status, title: 'In Progress', color: 'red', fieldName: 'in_progress_sorted_goal_ids' },
+    { id: 2, criteria: 'next', method: COLLECTION_METHODS.status, title: 'Next', color: 'yellow', fieldName: 'next_sorted_goal_ids' },
+    { id: 3, criteria: 'important', method: COLLECTION_METHODS.priority, title: 'Important', color: 'purple' },
+    { id: 4, criteria: 'delay', method: COLLECTION_METHODS.priority, title: 'Delay', color: 'green' },
+    { id: 5, criteria: 'ignore', method: COLLECTION_METHODS.priority, title: 'Ignore', color: 'gray' },
 ]
 
 export const DRAG_AND_DROP_COMPONENT_TYPES = {

@@ -1,14 +1,12 @@
 import { CSS } from '@dnd-kit/utilities';
 import { useSortable } from "@dnd-kit/sortable";
 import { DRAG_AND_DROP_COMPONENT_TYPES } from '../helpers/enums';
-import { useGoalCollectionContext } from '../helpers/Contexts';
+import { useGoalCollectionContext, useGoalListContext } from '../helpers/Contexts';
 
 
 const GoalCard = ({ goal }) => {
-    const {
-        goalPositions,
-        collectionCriteria,
-    } = useGoalCollectionContext()
+    /* const {} = useGoalListContext() */
+    const { collectionCriteria: { method, criteria } } = useGoalCollectionContext()
 
     const {
         attributes,
@@ -22,11 +20,7 @@ const GoalCard = ({ goal }) => {
         data: {
             type: DRAG_AND_DROP_COMPONENT_TYPES.goalCard,
             goal,
-            category: {
-                status: collectionCriteria.status,
-                priority: collectionCriteria.priority,
-                goalPositions,
-            }
+            category: { method, criteria }
         }
     });
 
