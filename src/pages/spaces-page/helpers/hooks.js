@@ -36,7 +36,7 @@ export function useFilterGoals({ criteria, method, fieldName }) {
     const filteredGoals = useMemo(() => {
         return allGoals?.filter(goal => goal[method] === criteria) ?? [];
     }, [allGoals, method, criteria]);
-    
+
     useEffect(() => {
         setGoalPositions(currentSpace?.[fieldName]);
     }, [currentSpace, fieldName]);
@@ -61,6 +61,8 @@ export function useFilterGoals({ criteria, method, fieldName }) {
     if (!didInitializeFromTheServer.current) {
         return { goals: filteredGoals, sortedPositions: filteredGoals.map(goal => goal.id) ?? [], updateGoalOrder };
     }
+
+    console.log(reorderedGoals);
 
     return { goals: reorderedGoals, sortedPositions: reorderedGoals.map(goal => goal.id) ?? [], updateGoalOrder };
 }

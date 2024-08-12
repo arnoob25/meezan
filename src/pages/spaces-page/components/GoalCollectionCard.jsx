@@ -16,15 +16,20 @@ const GoalCollectionCard = ({ collectionCriteria }) => {
 
     const updateSortedGoalIds = useUpdateGoalStatusOrderMutation();
 
-    console.log(goals);
-
     useDndMonitor({
         onDragOver(event) {
             const { active, over } = event;
             const activeGoal = active?.data?.current?.goal
             const overGoal = over?.data?.current?.goal
 
-            if (!over) return
+            if (active.data.current.goal.status === collectionCriteria.criteria) {
+                setAllGoals(prevGoals => {
+                    const activeIndex = prevGoals?.findIndex(g => g.id === active.id);
+                    const overIndex = prevGoals?.findIndex(g => g.id === over.id)
+
+                    return arrayMove(prevGoals, activeIndex, overIndex);
+                })
+            }
 
             if (active?.data?.current?.goal?.status === collectionCriteria?.criteria) {
                 setAllGoals(prevGoals => {
@@ -51,7 +56,7 @@ const GoalCollectionCard = ({ collectionCriteria }) => {
                         return goal
                     })
 
-                    console.log(prevGoals   , newState);
+                    console.log(prevGoals, newState);
 
 
 
