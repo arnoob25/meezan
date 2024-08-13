@@ -29,40 +29,45 @@ export function useQueryAndSetAllGoals(setAllGoals) {
 export function useFilterGoals({ criteria, method, fieldName }) {
     const [reorderedGoals, setReorderedGoals] = useState([]);
     const [goalPositions, setGoalPositions] = useState([]);
-    const didInitializeFromTheServer = useRef(false);
     const { currentSpace } = useSpaceContext();
     const { allGoals } = useGoalListContext();
 
     const filteredGoals = useMemo(() => {
-        return allGoals?.filter(goal => goal[method] === criteria) ?? [];
+        return allGoals?.filter(goal => goal[method] === criteria) ?? []
     }, [allGoals, method, criteria]);
 
     useEffect(() => {
-        setGoalPositions(currentSpace?.[fieldName]);
+        setGoalPositions(currentSpace?.[fieldName])
     }, [currentSpace, fieldName]);
 
     useEffect(() => {
-        if (filteredGoals.length && goalPositions.length && !didInitializeFromTheServer.current) {
-            const initialReorderedGoals = reorderGoals(filteredGoals, goalPositions);
-            setReorderedGoals(initialReorderedGoals);
-            didInitializeFromTheServer.current = true;
-        } else if (didInitializeFromTheServer.current) {
-            const updatedReorderedGoals = reorderGoals(filteredGoals, goalPositions);
-            setReorderedGoals(updatedReorderedGoals);
+        if (filteredGoals.length) {
+            const updatedListOfGoals = reorderGoals(filteredGoals, goalPositions);
+            setReorderedGoals(updatedListOfGoals);
         }
     }, [filteredGoals, goalPositions]);
 
     const updateGoalOrder = useCallback((activeId, overId) => {
-        setGoalPositions(prevPositions => (
-            arrayMove(prevPositions, prevPositions.indexOf(activeId), prevPositions.indexOf(overId))
+        setGoalPositions(prevPositions => arrayMove(
+            prevPositions,
+            prevPositions.indexOf(activeId),
+            prevPositions.indexOf(overId)
         ));
     }, []);
 
-    if (!didInitializeFromTheServer.current) {
-        return { goals: filteredGoals, sortedPositions: filteredGoals.map(goal => goal.id) ?? [], updateGoalOrder };
-    }
+    const addNewGoal = useCallback((activeGoalId) => {
+        setGoalPositions(prevPositions => {
+            const goalAlreadyExists = prevPositions.some(goalId => goalId === activeGoalId)
+            if (goalAlreadyExists) return
 
-    console.log(reorderedGoals);
+            return [...prevPositions, activeGoalId]
+        })
+    }, [])
 
-    return { goals: reorderedGoals, sortedPositions: reorderedGoals.map(goal => goal.id) ?? [], updateGoalOrder };
+    return {
+        goals: reorderedGoals,
+        sortedPositions: reorderedGoals.map(goal => goal.id) ?? [],
+        addNewGoal,
+        updateGoalOrder,
+    };
 }

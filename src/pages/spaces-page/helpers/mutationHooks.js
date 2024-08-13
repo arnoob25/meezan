@@ -27,22 +27,24 @@ export const useCreateGoalMutation = () => {
     });
 };
 
+// #region TODO: create a single mutation function for changing status/ priority
 export const useUpdateGoalStatusMutation = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
         mutationFn: async ({ id, status }) => {
+            console.log(id, status);
+
             const { data, error } = await supabase
                 .from('goals')
                 .update({ status: status })
                 .eq('id', id)
                 .select()
 
-
             if (error) throw error;
             return data[0];
         },
-        onSuccess: (newGoal) => {
+        onSuccess: () => {
             // Invalidate and refetch relevant queries
             queryClient.invalidateQueries(['goals']);
         },
@@ -57,17 +59,19 @@ export const useUpdateGoalPriorityMutation = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async ({ id, priority }) => {
+        mutationFn: async ({ id, status }) => {
+            console.log(id, status);
+
             const { data, error } = await supabase
                 .from('goals')
-                .update({ priority: priority })
+                .update({ status: status })
                 .eq('id', id)
                 .select()
 
             if (error) throw error;
             return data[0];
         },
-        onSuccess: (newGoal) => {
+        onSuccess: () => {
             // Invalidate and refetch relevant queries
             queryClient.invalidateQueries(['goals']);
         },
@@ -77,6 +81,7 @@ export const useUpdateGoalPriorityMutation = () => {
         },
     });
 };
+// #endregion
 
 export const useUpdateGoalStatusOrderMutation = () => {
     const queryClient = useQueryClient();

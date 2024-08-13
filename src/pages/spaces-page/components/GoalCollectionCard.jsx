@@ -4,34 +4,35 @@ import GoalCard from "./GoalCard";
 import GoalCreationModal from './GoalCreationModal';
 import { arrayMove, SortableContext } from "@dnd-kit/sortable";
 import { useDndMonitor } from "@dnd-kit/core";
-import { useUpdateGoalStatusOrderMutation } from "../helpers/mutationHooks";
+import { useUpdateGoalStatusMutation, useUpdateGoalStatusOrderMutation } from "../helpers/mutationHooks";
 import { useFilterGoals } from "../helpers/hooks";
 
 const GoalCollectionCard = ({ collectionCriteria }) => {
-    const { goals, sortedPositions, updateGoalOrder } = useFilterGoals(collectionCriteria);
+    const {
+        goals,
+        sortedPositions,
+        addNewGoal,
+        updateGoalOrder
+    } = useFilterGoals(collectionCriteria);
 
     const { currentSpace } = useSpaceContext();
     const { setAllGoals } = useGoalListContext();
     const { setIsModalVisible } = useGoalCreationModalContext();
 
+    const updateGoalStatus = useUpdateGoalStatusMutation()
     const updateSortedGoalIds = useUpdateGoalStatusOrderMutation();
 
     useDndMonitor({
         onDragOver(event) {
             const { active, over } = event;
+            if (!over) return
             const activeGoal = active?.data?.current?.goal
             const overGoal = over?.data?.current?.goal
+            const criteria= collectionCriteria?.criteria
 
-            if (active.data.current.goal.status === collectionCriteria.criteria) {
-                setAllGoals(prevGoals => {
-                    const activeIndex = prevGoals?.findIndex(g => g.id === active.id);
-                    const overIndex = prevGoals?.findIndex(g => g.id === over.id)
+            if (!activeGoal?.status && !overGoal?.status && !collectionCriteria?.criteria) return
 
-                    return arrayMove(prevGoals, activeIndex, overIndex);
-                })
-            }
-
-            if (active?.data?.current?.goal?.status === collectionCriteria?.criteria) {
+            if (activeGoal?.status === criteria) {
                 setAllGoals(prevGoals => {
                     const activeIndex = prevGoals?.findIndex(g => g.id === active.id);
                     const overIndex = prevGoals?.findIndex(g => g.id === over.id);
@@ -42,8 +43,7 @@ const GoalCollectionCard = ({ collectionCriteria }) => {
                 updateGoalOrder(active.id, over.id);
             }
 
-            if (activeGoal?.status && overGoal?.status && collectionCriteria?.criteria &&
-                activeGoal.status !== overGoal.status && overGoal.status === collectionCriteria.criteria) {
+            if (activeGoal.status !== overGoal.status && overGoal.status === collectionCriteria.criteria) {
 
                 const activeGoalWithUpdatedStatus = {
                     ...activeGoal,
@@ -55,13 +55,16 @@ const GoalCollectionCard = ({ collectionCriteria }) => {
                         if (goal.id === active.id) return activeGoalWithUpdatedStatus
                         return goal
                     })
-
-                    console.log(prevGoals, newState);
-
-
-
                     return newState
                 });
+
+                addNewGoal(active.id)
+                console.log(sortedPositions);
+
+                updateGoalStatus.mutate({
+                    id: active.id,
+                    status: collectionCriteria.criteria
+                })
             }
 
             updateSortedGoalIds.mutate({
