@@ -27,22 +27,24 @@ export const useCreateGoalMutation = () => {
     });
 };
 
+// #region TODO: create a single mutation function for changing status/ priority
 export const useUpdateGoalStatusMutation = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
         mutationFn: async ({ id, status }) => {
+            console.log(id, status);
+
             const { data, error } = await supabase
                 .from('goals')
                 .update({ status: status })
                 .eq('id', id)
                 .select()
 
-
             if (error) throw error;
             return data[0];
         },
-        onSuccess: (newGoal) => {
+        onSuccess: () => {
             // Invalidate and refetch relevant queries
             queryClient.invalidateQueries(['goals']);
         },
@@ -57,17 +59,19 @@ export const useUpdateGoalPriorityMutation = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async ({ id, priority }) => {
+        mutationFn: async ({ id, status }) => {
+            console.log(id, status);
+
             const { data, error } = await supabase
                 .from('goals')
-                .update({ priority: priority })
+                .update({ status: status })
                 .eq('id', id)
                 .select()
 
             if (error) throw error;
             return data[0];
         },
-        onSuccess: (newGoal) => {
+        onSuccess: () => {
             // Invalidate and refetch relevant queries
             queryClient.invalidateQueries(['goals']);
         },
@@ -77,24 +81,25 @@ export const useUpdateGoalPriorityMutation = () => {
         },
     });
 };
-
-const debouncedUpdate = _.debounce(
-    async ({ space_id, field, sorted_goal_ids }) => {
-        const { data, error } = await supabase
-            .from('spaces')
-            .update({ [field]: [...sorted_goal_ids] })
-            .eq('id', space_id)
-            .select();
-
-        if (error) throw error;
-        
-        return data[0];
-    },
-    1000
-);
+// #endregion
 
 export const useUpdateGoalStatusOrderMutation = () => {
     const queryClient = useQueryClient();
+
+    const debouncedUpdate = _.debounce(
+        async ({ space_id, field, sorted_goal_ids }) => {
+            const { data, error } = await supabase
+                .from('spaces')
+                .update({ [field]: [...sorted_goal_ids] })
+                .eq('id', space_id)
+                .select();
+
+            if (error) throw error;
+
+            return data[0];
+        },
+        1000
+    );
 
     return useMutation({
         mutationFn: async (args) => debouncedUpdate(args),
