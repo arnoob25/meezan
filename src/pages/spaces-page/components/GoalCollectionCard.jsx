@@ -1,4 +1,4 @@
-import { Icon } from "@iconify-icon/react";
+/* import { Icon } from "@iconify-icon/react"; */
 import { useGoalListContext, useGoalCreationModalContext, useSpaceContext, GoalCollectionContextProvider } from "../helpers/Contexts";
 import GoalCard from "./GoalCard";
 import GoalCreationModal from './GoalCreationModal';
@@ -28,7 +28,7 @@ const GoalCollectionCard = ({ collectionCriteria }) => {
             if (!over) return
             const activeGoal = active?.data?.current?.goal
             const overGoal = over?.data?.current?.goal
-            const criteria= collectionCriteria?.criteria
+            const criteria = collectionCriteria?.criteria
 
             if (!activeGoal?.status && !overGoal?.status && !collectionCriteria?.criteria) return
 
@@ -80,7 +80,7 @@ const GoalCollectionCard = ({ collectionCriteria }) => {
                 <div className="flex justify-between items-end mb-2">
                     <div className="title text-xs">{collectionCriteria?.title}</div>
                     <div onClick={() => setIsModalVisible(true)} className="bg-light2 size-7 rounded-flat flex justify-center items-center cursor-pointer">
-                        <Icon icon="hugeicons:plus-sign" />
+                        x {/* <Icon icon="hugeicons:plus-sign" /> */}
                     </div>
                 </div>
 
