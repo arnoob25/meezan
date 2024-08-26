@@ -5,7 +5,6 @@ import { useGoalCollectionContext, useGoalListContext } from '../helpers/Context
 
 
 const GoalCard = ({ goal }) => {
-    /* const {} = useGoalListContext() */
     const { collectionCriteria: { method, criteria } } = useGoalCollectionContext()
 
     const {

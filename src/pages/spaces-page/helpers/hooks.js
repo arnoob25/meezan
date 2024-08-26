@@ -22,47 +22,68 @@ export function useQueryAndSetAllGoals(setAllGoals) {
     })
 
     useEffect(() => {
-        setAllGoals(prevGoals => isCategoryViewSelected ? categorizedGoals : importantGoals)
+        setAllGoals(prevGoals => {
+            const newGoals = isCategoryViewSelected ? categorizedGoals : importantGoals
+            if (!newGoals) return []
+            return newGoals
+        })
     }, [isCategoryViewSelected, setAllGoals, categorizedGoals, importantGoals])
 }
 
 export function useFilterGoals({ criteria, method, fieldName }) {
-    const [reorderedGoals, setReorderedGoals] = useState([]);
-    const [goalPositions, setGoalPositions] = useState([]);
-    const { currentSpace } = useSpaceContext();
+    const {
+        isCategoryViewSelected,
+        currentSpace,
+        selectedCategoryId,
+        categories
+    } = useSpaceContext();
     const { allGoals } = useGoalListContext();
 
+    const [reorderedGoals, setReorderedGoals] = useState([]);
+    const [goalPositions, setGoalPositions] = useState([]);
+
+    // Filter goals based on criteria and method
     const filteredGoals = useMemo(() => {
-        return allGoals?.filter(goal => goal[method] === criteria) ?? []
+        return allGoals?.filter(goal => goal?.[method] === criteria) ?? []
     }, [allGoals, method, criteria]);
 
+    // Set goal positions based on category or space
     useEffect(() => {
-        setGoalPositions(currentSpace?.[fieldName])
-    }, [currentSpace, fieldName]);
-
-    useEffect(() => {
-        if (filteredGoals.length) {
-            const updatedListOfGoals = reorderGoals(filteredGoals, goalPositions);
-            setReorderedGoals(updatedListOfGoals);
+        if (isCategoryViewSelected) {
+            const selectedCategory = categories.find(category => category.id === selectedCategoryId)
+            const goalPositionsInCategory = selectedCategory?.[fieldName] ?? []
+            setGoalPositions(goalPositionsInCategory)
         }
+        else setGoalPositions(currentSpace?.[fieldName])
+    }, [categories, currentSpace, fieldName, isCategoryViewSelected, selectedCategoryId]);
+
+    // Reorder goals based on updated positions
+    useEffect(() => {
+        const updatedListOfGoals = reorderGoals(filteredGoals, goalPositions);
+        setReorderedGoals(updatedListOfGoals);
     }, [filteredGoals, goalPositions]);
 
+    // Update goal order when dragged
     const updateGoalOrder = useCallback((activeId, overId) => {
-        setGoalPositions(prevPositions => arrayMove(
-            prevPositions,
-            prevPositions.indexOf(activeId),
-            prevPositions.indexOf(overId)
-        ));
+        setGoalPositions(prevPositions => {
+            if (!prevPositions) return []
+            return arrayMove(
+                prevPositions,
+                prevPositions.indexOf(activeId),
+                prevPositions.indexOf(overId)
+            );
+        });
     }, []);
 
+    // Add a new goal to the list
     const addNewGoal = useCallback((activeGoalId) => {
         setGoalPositions(prevPositions => {
             if (prevPositions.includes(activeGoalId)) return prevPositions
-
             return [...prevPositions, activeGoalId];
         });
     }, []);
 
+    // Return reordered goals, their positions, and update functions
     return {
         goals: reorderedGoals,
         sortedPositions: reorderedGoals.map(goal => goal.id) ?? [],

@@ -1,10 +1,15 @@
-/* import { Icon } from "@iconify-icon/react"; */
-import { useGoalListContext, useGoalCreationModalContext, useSpaceContext, GoalCollectionContextProvider } from "../helpers/Contexts";
+import { 
+    useGoalListContext,
+    useGoalCreationModalContext, 
+    useSpaceContext, 
+    GoalCollectionContextProvider 
+} from "../helpers/Contexts";
 import GoalCard from "./GoalCard";
 import GoalCreationModal from './GoalCreationModal';
 import { arrayMove, SortableContext } from "@dnd-kit/sortable";
 import { useDndMonitor } from "@dnd-kit/core";
-import { useUpdateGoalStatusMutation, useUpdateGoalStatusOrderMutation } from "../helpers/mutationHooks";
+import { useUpdateGoalCollectionCriteriaMutation, 
+    useUpdateGoalStatusOrderMutation } from "../helpers/mutationHooks";
 import { useFilterGoals } from "../helpers/hooks";
 
 const GoalCollectionCard = ({ collectionCriteria }) => {
@@ -19,23 +24,26 @@ const GoalCollectionCard = ({ collectionCriteria }) => {
     const { setAllGoals } = useGoalListContext();
     const { setIsModalVisible } = useGoalCreationModalContext();
 
-    const updateGoalStatus = useUpdateGoalStatusMutation()
+    const updateCollectionCriteria = useUpdateGoalCollectionCriteriaMutation()
     const updateSortedGoalIds = useUpdateGoalStatusOrderMutation();
 
     useDndMonitor({
         onDragOver(event) {
             const { active, over } = event;
-            if (!over) return
+            if (!active || !over) return
+
             const activeGoal = active?.data?.current?.goal
             const overGoal = over?.data?.current?.goal
-            const criteria = collectionCriteria?.criteria
+            const { method, criteria } = collectionCriteria ?? {}
 
-            if (!activeGoal?.status && !overGoal?.status && !collectionCriteria?.criteria) return
+            if (!method && !criteria && !activeGoal[method] && !overGoal[method]) return
 
-            if (activeGoal?.status === criteria) {
+            if (activeGoal[method] === overGoal[method] && activeGoal[method] === criteria) {
+
                 setAllGoals(prevGoals => {
-                    const activeIndex = prevGoals?.findIndex(g => g.id === active.id);
-                    const overIndex = prevGoals?.findIndex(g => g.id === over.id);
+                    console.log(prevGoals);
+                    const activeIndex = prevGoals?.findIndex(g => g && g.id === active.id);
+                    const overIndex = prevGoals?.findIndex(g => g && g.id === over.id);
 
                     return arrayMove(prevGoals, activeIndex, overIndex);
                 });
@@ -43,11 +51,11 @@ const GoalCollectionCard = ({ collectionCriteria }) => {
                 updateGoalOrder(active.id, over.id);
             }
 
-            if (activeGoal.status !== overGoal.status && overGoal.status === collectionCriteria.criteria) {
+            if (activeGoal[method] !== overGoal[method] && overGoal[method] === criteria) {
 
                 const activeGoalWithUpdatedStatus = {
                     ...activeGoal,
-                    status: collectionCriteria.criteria
+                    [method]: collectionCriteria.criteria
                 }
 
                 setAllGoals(prevGoals => {
@@ -60,14 +68,12 @@ const GoalCollectionCard = ({ collectionCriteria }) => {
 
                 addNewGoal(active.id)
 
-                updateGoalStatus.mutate({
-                    id: active.id,
-                    status: collectionCriteria.criteria
-                })
+                updateCollectionCriteria.mutate({ id: active.id, method, criteria })
             }
 
             updateSortedGoalIds.mutate({
                 space_id: currentSpace?.id,
+                table: collectionCriteria?.tableName,
                 field: collectionCriteria?.fieldName,
                 sorted_goal_ids: sortedPositions,
             });
@@ -79,9 +85,9 @@ const GoalCollectionCard = ({ collectionCriteria }) => {
             <GoalCollectionContextProvider value={{ collectionCriteria }}>
                 <div className="flex justify-between items-end mb-2">
                     <div className="title text-xs">{collectionCriteria?.title}</div>
-                    <div onClick={() => setIsModalVisible(true)} className="bg-light2 size-7 rounded-flat flex justify-center items-center cursor-pointer">
-                        x {/* <Icon icon="hugeicons:plus-sign" /> */}
-                    </div>
+                    <button onClick={() => setIsModalVisible(true)} className="bg-light2 size-7 rounded-flat flex justify-center items-center cursor-pointer">
+                        x
+                    </button>
                 </div>
 
                 <div className="rounded-lg flex flex-col gap-3">

@@ -1,18 +1,18 @@
-import { useQuery } from "@tanstack/react-query";
 import { useSpaceContext } from "../helpers/Contexts";
-import { getAllCategoriesForASpace } from "../helpers/queryFunctions";
 
 const CategoryTabs = () => {
-    const { currentSpaceId, setSelectedCategoryId } = useSpaceContext()
+    const { categories, setSelectedCategoryId } = useSpaceContext();
 
-    const { data: categories } = useQuery({
-        queryKey: ['categories', currentSpaceId],
-        queryFn: () => getAllCategoriesForASpace(currentSpaceId),
-    })
+    // Sort categories alphabetically by title
+    const sortedCategories = categories?.sort((a, b) => {
+        if (a.title < b.title) return -1;
+        if (a.title > b.title) return 1;
+        return 0;
+    });
 
     return (
         <div className="flex flex-grow gap-1">
-            {categories?.map(category => (
+            {sortedCategories?.map(category => (
                 <button
                     key={category.id}
                     onClick={() => setSelectedCategoryId(category.id)}
@@ -25,4 +25,4 @@ const CategoryTabs = () => {
     );
 }
 
-export default CategoryTabs
+export default CategoryTabs;

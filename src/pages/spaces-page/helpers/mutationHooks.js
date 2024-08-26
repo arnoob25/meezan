@@ -27,17 +27,15 @@ export const useCreateGoalMutation = () => {
     });
 };
 
-// #region TODO: create a single mutation function for changing status/ priority
-export const useUpdateGoalStatusMutation = () => {
+export const useUpdateGoalCollectionCriteriaMutation = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async ({ id, status }) => {
-            console.log(id, status);
+        mutationFn: async ({ id, method, criteria }) => {
 
             const { data, error } = await supabase
                 .from('goals')
-                .update({ status: status })
+                .update({ [method]: criteria })
                 .eq('id', id)
                 .select()
 
@@ -55,41 +53,14 @@ export const useUpdateGoalStatusMutation = () => {
     });
 };
 
-export const useUpdateGoalPriorityMutation = () => {
-    const queryClient = useQueryClient();
-
-    return useMutation({
-        mutationFn: async ({ id, status }) => {
-            console.log(id, status);
-
-            const { data, error } = await supabase
-                .from('goals')
-                .update({ status: status })
-                .eq('id', id)
-                .select()
-
-            if (error) throw error;
-            return data[0];
-        },
-        onSuccess: () => {
-            // Invalidate and refetch relevant queries
-            queryClient.invalidateQueries(['goals']);
-        },
-        onError: (error) => {
-            // TODO: show a toast notification
-            console.error('Error updating goal:', error);
-        },
-    });
-};
-// #endregion
-
+// TODO: revise the function name
 export const useUpdateGoalStatusOrderMutation = () => {
     const queryClient = useQueryClient();
 
     const debouncedUpdate = _.debounce(
-        async ({ space_id, field, sorted_goal_ids }) => {
+        async ({ space_id, table, field, sorted_goal_ids }) => {
             const { data, error } = await supabase
-                .from('spaces')
+                .from(table)
                 .update({ [field]: [...sorted_goal_ids] })
                 .eq('id', space_id)
                 .select();

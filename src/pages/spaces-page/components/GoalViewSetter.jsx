@@ -3,7 +3,6 @@ import { useState } from "react";
 import { useSpaceContext } from "../helpers/Contexts";
 import CategoryTabs from "./CategoryTabs";
 import CategoryCreationModal from "./CategoryCreationModal";
-/* import { Icon } from "@iconify-icon/react/dist/iconify.js"; */
 
 const GoalViewSetter = () => {
     const { isCategoryViewSelected, setIsCategoryViewSelected } = useSpaceContext()
