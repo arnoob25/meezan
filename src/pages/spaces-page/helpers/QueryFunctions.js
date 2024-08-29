@@ -48,6 +48,7 @@ export async function getAllCategoriesForASpace(spaceId) {
         .from('categories')
         .select("*")
         .eq('space_id', spaceId)
+        .order('title', { ascending: true });
 
     if (error) {
         console.error("Error fetching categories:", error);

@@ -9,8 +9,6 @@ const SpaceContext = createContext();
 const GoalListContext = createContext()
 const GoalCreationModalContext = createContext()
 const GoalCollectionContext = createContext()
-
-
 // #region space context
 export const SpaceContextProvider = ({ children, value }) => {
   const [isCategoryViewSelected, setIsCategoryViewSelected] = useState(false);
@@ -25,9 +23,13 @@ export const SpaceContextProvider = ({ children, value }) => {
 
   useEffect(() => {
     const firstCategoryId = categories[0]?.id;
-    if (firstCategoryId) setSelectedCategoryId(firstCategoryId);
+    if (firstCategoryId) setSelectedCategoryId(
+      prevCategoryId => {
+        if (prevCategoryId) return prevCategoryId
+        return firstCategoryId
+      }
+    );
   }, [categories]);
-
 
   const context = useMemo(() => ({
     isCategoryViewSelected,
@@ -47,8 +49,10 @@ export const SpaceContextProvider = ({ children, value }) => {
 const GoalCreationModalContextProvider = ({ children }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
+  const context = useMemo(() => ({ isModalVisible, setIsModalVisible }), [isModalVisible])
+
   return (
-    <GoalCreationModalContext.Provider value={{ isModalVisible, setIsModalVisible }}>
+    <GoalCreationModalContext.Provider value={context}>
       {children}
     </GoalCreationModalContext.Provider>
   )
@@ -74,11 +78,16 @@ export const GoalListContextProvider = ({ children, value }) => {
   );
 };
 
-export const GoalCollectionContextProvider = ({ children, value }) => (
-  <GoalCollectionContext.Provider value={{ ...value }}>
-    {children}
-  </GoalCollectionContext.Provider>
-)
+export const GoalCollectionContextProvider = ({ children, value }) => {
+
+  const context = useMemo(() => ({ ...value }), [value])
+
+  return (
+    <GoalCollectionContext.Provider value={context}>
+      {children}
+    </GoalCollectionContext.Provider>
+  )
+}
 // #endregion
 
 

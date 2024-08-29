@@ -1,15 +1,17 @@
-import { 
+import {
     useGoalListContext,
-    useGoalCreationModalContext, 
-    useSpaceContext, 
-    GoalCollectionContextProvider 
+    useGoalCreationModalContext,
+    useSpaceContext,
+    GoalCollectionContextProvider
 } from "../helpers/Contexts";
 import GoalCard from "./GoalCard";
 import GoalCreationModal from './GoalCreationModal';
 import { arrayMove, SortableContext } from "@dnd-kit/sortable";
 import { useDndMonitor } from "@dnd-kit/core";
-import { useUpdateGoalCollectionCriteriaMutation, 
-    useUpdateGoalStatusOrderMutation } from "../helpers/mutationHooks";
+import {
+    useUpdateGoalCollectionCriteriaMutation,
+    useUpdateGoalOrderMutation
+} from "../helpers/mutationHooks";
 import { useFilterGoals } from "../helpers/hooks";
 
 const GoalCollectionCard = ({ collectionCriteria }) => {
@@ -20,12 +22,12 @@ const GoalCollectionCard = ({ collectionCriteria }) => {
         updateGoalOrder
     } = useFilterGoals(collectionCriteria);
 
-    const { currentSpace } = useSpaceContext();
+    const { isCategoryViewSelected, currentSpace, selectedCategoryId } = useSpaceContext();
     const { setAllGoals } = useGoalListContext();
     const { setIsModalVisible } = useGoalCreationModalContext();
 
     const updateCollectionCriteria = useUpdateGoalCollectionCriteriaMutation()
-    const updateSortedGoalIds = useUpdateGoalStatusOrderMutation();
+    const updateSortedGoalIds = useUpdateGoalOrderMutation();
 
     useDndMonitor({
         onDragOver(event) {
@@ -36,23 +38,22 @@ const GoalCollectionCard = ({ collectionCriteria }) => {
             const overGoal = over?.data?.current?.goal
             const { method, criteria } = collectionCriteria ?? {}
 
-            if (!method && !criteria && !activeGoal[method] && !overGoal[method]) return
+            if (!method && !criteria && !activeGoal?.[method] && !overGoal?.[method]) return
 
-            if (activeGoal[method] === overGoal[method] && activeGoal[method] === criteria) {
+            const isDraggedInSameCollection = activeGoal?.[method] === overGoal?.[method] && activeGoal?.[method] === criteria
+            const isDraggedInDifferentCollection = activeGoal?.[method] !== overGoal?.[method] && overGoal?.[method] === criteria
 
+            if (isDraggedInSameCollection) {
                 setAllGoals(prevGoals => {
-                    console.log(prevGoals);
+
                     const activeIndex = prevGoals?.findIndex(g => g && g.id === active.id);
                     const overIndex = prevGoals?.findIndex(g => g && g.id === over.id);
-
                     return arrayMove(prevGoals, activeIndex, overIndex);
                 });
-
                 updateGoalOrder(active.id, over.id);
             }
 
-            if (activeGoal[method] !== overGoal[method] && overGoal[method] === criteria) {
-
+            if (isDraggedInDifferentCollection) {
                 const activeGoalWithUpdatedStatus = {
                     ...activeGoal,
                     [method]: collectionCriteria.criteria
@@ -72,7 +73,7 @@ const GoalCollectionCard = ({ collectionCriteria }) => {
             }
 
             updateSortedGoalIds.mutate({
-                space_id: currentSpace?.id,
+                item_id: isCategoryViewSelected ? selectedCategoryId : currentSpace?.id,
                 table: collectionCriteria?.tableName,
                 field: collectionCriteria?.fieldName,
                 sorted_goal_ids: sortedPositions,

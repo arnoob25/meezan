@@ -53,20 +53,20 @@ export const useUpdateGoalCollectionCriteriaMutation = () => {
     });
 };
 
-// TODO: revise the function name
-export const useUpdateGoalStatusOrderMutation = () => {
+// updates the order of goals in different collections (status/ priority) of a space or category
+export const useUpdateGoalOrderMutation = () => {   
     const queryClient = useQueryClient();
 
     const debouncedUpdate = _.debounce(
-        async ({ space_id, table, field, sorted_goal_ids }) => {
+        async ({ item_id, table, field, sorted_goal_ids }) => {
+
             const { data, error } = await supabase
                 .from(table)
                 .update({ [field]: [...sorted_goal_ids] })
-                .eq('id', space_id)
+                .eq('id', item_id)
                 .select();
 
             if (error) throw error;
-
             return data[0];
         },
         1000
