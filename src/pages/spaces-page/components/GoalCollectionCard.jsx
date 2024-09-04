@@ -7,7 +7,7 @@ import {
 import GoalCard from "./GoalCard";
 import GoalCreationModal from './GoalCreationModal';
 import { arrayMove, SortableContext } from "@dnd-kit/sortable";
-import { useDndMonitor } from "@dnd-kit/core";
+import { useDndMonitor, useDroppable } from "@dnd-kit/core";
 import {
     useUpdateGoalCollectionCriteriaMutation,
     useUpdateGoalOrderMutation
@@ -15,6 +15,11 @@ import {
 import { useFilterGoals } from "../helpers/hooks";
 
 const GoalCollectionCard = ({ collectionCriteria }) => {
+    const { setNodeRef } = useDroppable({
+        id: collectionCriteria.id,
+        data: { collection: collectionCriteria }
+    })
+
     const {
         goals,
         sortedPositions,
@@ -34,38 +39,42 @@ const GoalCollectionCard = ({ collectionCriteria }) => {
             const { active, over } = event;
             if (!active || !over) return
 
-            const activeGoal = active?.data?.current?.goal
-            const overGoal = over?.data?.current?.goal
+            const activeGoal = active.data?.current?.goal
+            const overGoal = over.data?.current?.goal
             const { method, criteria } = collectionCriteria ?? {}
 
-            if (!method && !criteria && !activeGoal?.[method] && !overGoal?.[method]) return
+            const droppedOverGoal = !activeGoal?.[method] && !overGoal?.[method]
+
+            if (!method && !criteria && droppedOverGoal) return
 
             const isDraggedInSameCollection = activeGoal?.[method] === overGoal?.[method] && activeGoal?.[method] === criteria
-            const isDraggedInDifferentCollection = activeGoal?.[method] !== overGoal?.[method] && overGoal?.[method] === criteria
+            const overCollection = over.data?.current?.collection
+
+            const isDraggedInDifferentCollection = activeGoal?.[method] !== overCollection?.criteria && overCollection?.criteria === criteria
 
             if (isDraggedInSameCollection) {
-                setAllGoals(prevGoals => {
-
-                    const activeIndex = prevGoals?.findIndex(g => g && g.id === active.id);
-                    const overIndex = prevGoals?.findIndex(g => g && g.id === over.id);
-                    return arrayMove(prevGoals, activeIndex, overIndex);
+                setAllGoals(allGoals => { // allGoals refer to goals being displayed in the current view in the space
+                    const activeIndex = allGoals?.findIndex(g => g && g.id === active.id);
+                    const overIndex = allGoals?.findIndex(g => g && g.id === over.id);
+                    return arrayMove(allGoals, activeIndex, overIndex);
                 });
+
                 updateGoalOrder(active.id, over.id);
             }
 
             if (isDraggedInDifferentCollection) {
+                console.log(over);
                 const activeGoalWithUpdatedStatus = {
                     ...activeGoal,
                     [method]: collectionCriteria.criteria
                 }
 
-                setAllGoals(prevGoals => {
-                    const newState = prevGoals.map(goal => {
+                setAllGoals(allGoals => ( // allGoals refer to goals being displayed in the current view in the space
+                    allGoals.map(goal => {
                         if (goal.id === active.id) return activeGoalWithUpdatedStatus
                         return goal
                     })
-                    return newState
-                });
+                ));
 
                 addNewGoal(active.id)
 
@@ -79,10 +88,13 @@ const GoalCollectionCard = ({ collectionCriteria }) => {
                 sorted_goal_ids: sortedPositions,
             });
         },
+        onDragEnd(event) {
+
+        }
     });
 
     return (
-        <div className="bg-light1 rounded-lg p-3 mx-3">
+        <div ref={setNodeRef} className="bg-light1 rounded-lg p-3 mx-3">
             <GoalCollectionContextProvider value={{ collectionCriteria }}>
                 <div className="flex justify-between items-end mb-2">
                     <div className="title text-xs">{collectionCriteria?.title}</div>
@@ -93,6 +105,7 @@ const GoalCollectionCard = ({ collectionCriteria }) => {
 
                 <div className="rounded-lg flex flex-col gap-3">
                     <SortableContext items={sortedPositions}>
+                        {console.log(goals)}
                         {goals?.map(goal => <GoalCard key={goal.id} goal={goal} />)}
                     </SortableContext>
                 </div>

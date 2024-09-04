@@ -85,7 +85,7 @@ export function useFilterGoals({ criteria, method, fieldName }) {
     // Return reordered goals, their positions, and update functions
     return {
         goals: reorderedGoals,
-        sortedPositions: reorderedGoals.map(goal => goal.id) ?? [],
+        sortedPositions: reorderedGoals?.map(goal => goal.id) ?? [],
         addNewGoal,
         updateGoalOrder,
     };
