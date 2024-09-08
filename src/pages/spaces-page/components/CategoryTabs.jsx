@@ -1,14 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
 import { useSpaceContext } from "../helpers/Contexts";
-import { getAllCategoriesForASpace } from "../helpers/QueryFunctions";
 
 const CategoryTabs = () => {
-    const { currentSpaceId, setSelectedCategoryId } = useSpaceContext()
-
-    const { data: categories } = useQuery({
-        queryKey: ['categories', currentSpaceId],
-        queryFn: () => getAllCategoriesForASpace(currentSpaceId),
-    })
+    const { categories, setSelectedCategoryId } = useSpaceContext();
 
     return (
         <div className="flex flex-grow gap-1">
@@ -25,4 +18,4 @@ const CategoryTabs = () => {
     );
 }
 
-export default CategoryTabs
+export default CategoryTabs;

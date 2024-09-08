@@ -1,41 +1,97 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { useQueryAndSetAllGoals } from "./hooks";
+import { useQuery } from "@tanstack/react-query";
+import { getAllCategoriesForASpace } from "./queryFunctions";
 
-// #region space context
 const SpaceContext = createContext();
-
+const GoalListContext = createContext()
+const GoalCreationModalContext = createContext()
+const GoalCollectionContext = createContext()
+// #region space context
 export const SpaceContextProvider = ({ children, value }) => {
-  const [shouldDisplayCategories, setShouldDisplayCategories] = useState(false);
-  const [selectedCategoryId, setSelectedCategoryId] = useState(1);
+  const [isCategoryViewSelected, setIsCategoryViewSelected] = useState(false);
+  const [selectedCategoryId, setSelectedCategoryId] = useState(null);
+  const { currentSpaceId } = value
 
-  const context = {
-    shouldDisplayCategories,
-    setShouldDisplayCategories,
+  const { data: categories = [] } = useQuery({
+    queryKey: ['categories', currentSpaceId],
+    queryFn: () => getAllCategoriesForASpace(currentSpaceId),
+    enabled: isCategoryViewSelected,
+  })
+
+  useEffect(() => {
+    const firstCategoryId = categories[0]?.id;
+    if (firstCategoryId) setSelectedCategoryId(
+      prevCategoryId => {
+        if (prevCategoryId) return prevCategoryId
+        return firstCategoryId
+      }
+    );
+  }, [categories]);
+
+  const context = useMemo(() => ({
+    isCategoryViewSelected,
+    setIsCategoryViewSelected,
     selectedCategoryId,
     setSelectedCategoryId,
+    categories,
     ...value
-  };
+  }), [categories, isCategoryViewSelected, selectedCategoryId, value]);
 
   return <SpaceContext.Provider value={context}>{children}</SpaceContext.Provider>;
 };
-
-export const useSpaceContext = () => useContext(SpaceContext);
 // #endregion
 
-// #region goal collection context
-const GoalCollectionContext = createContext()
 
-export const GoalCollectionContextProvider = ({ children, value }) => {
+// #region goal contexts
+const GoalCreationModalContextProvider = ({ children }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const context = {
-    isModalVisible,
-    setIsModalVisible,
-    ...value,
-  }
+  const context = useMemo(() => ({ isModalVisible, setIsModalVisible }), [isModalVisible])
 
-  return <GoalCollectionContext.Provider value={context}>{children}</GoalCollectionContext.Provider>
+  return (
+    <GoalCreationModalContext.Provider value={context}>
+      {children}
+    </GoalCreationModalContext.Provider>
+  )
 }
 
-export const useGoalCollectionContext = () => useContext(GoalCollectionContext)
+export const GoalListContextProvider = ({ children, value }) => {
+  const [allGoals, setAllGoals] = useState([]);
+
+  useQueryAndSetAllGoals(setAllGoals)
+
+  const context = useMemo(() => ({
+    allGoals,
+    setAllGoals,
+    ...value
+  }), [allGoals, value])
+
+  return (
+    <GoalListContext.Provider value={context}>
+      <GoalCreationModalContextProvider>
+        {children}
+      </GoalCreationModalContextProvider>
+    </GoalListContext.Provider>
+  );
+};
+
+export const GoalCollectionContextProvider = ({ children, value }) => {
+
+  const context = useMemo(() => ({ ...value }), [value])
+
+  return (
+    <GoalCollectionContext.Provider value={context}>
+      {children}
+    </GoalCollectionContext.Provider>
+  )
+}
 // #endregion
+
+
+export const useSpaceContext = () => useContext(SpaceContext)
+export const useGoalListContext = () => useContext(GoalListContext)
+export const useGoalCreationModalContext = () => useContext(GoalCreationModalContext)
+export const useGoalCollectionContext = () => useContext(GoalCollectionContext)
