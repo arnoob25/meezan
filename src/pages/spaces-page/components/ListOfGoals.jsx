@@ -1,10 +1,9 @@
-import { DndContext, DragOverlay } from "@dnd-kit/core"
 import { GoalListContextProvider, useSpaceContext } from "../helpers/Contexts"
-import { restrictToVerticalAxis, restrictToWindowEdges } from "@dnd-kit/modifiers"
 import { useState } from "react"
 import { COLLECTION_CRITERIA, COLLECTION_METHODS, } from "../helpers/enums"
 import GoalCollectionCard from "./GoalCollectionCard"
-
+import { DndContext, DragOverlay } from "@dnd-kit/core"
+import { restrictToVerticalAxis, restrictToWindowEdges } from "@dnd-kit/modifiers"
 
 const ListOfGoals = () => {
     const { isCategoryViewSelected } = useSpaceContext()
@@ -15,7 +14,7 @@ const ListOfGoals = () => {
             <GoalListContextProvider>
                 <DndContext modifiers={[
                     restrictToVerticalAxis,
-                    restrictToWindowEdges,
+                    restrictToWindowEdges
                 ]}
                     onDragStart={handleDragStart}
                 >

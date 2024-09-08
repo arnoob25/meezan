@@ -4,6 +4,8 @@ import { getAllGoalsWithinACategory, getAllImportantGoalsWithinASpace } from "./
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { reorderGoals } from "./utils";
 import { arrayMove } from "@dnd-kit/sortable";
+import { useUpdateGoalOrderMutation } from "./mutationHooks";
+import { areArraysEqual } from "../../../lib/utils";
 
 export function useQueryAndSetAllGoals(setAllGoals) {
     const { isCategoryViewSelected, currentSpace, selectedCategoryId } = useSpaceContext()
@@ -30,7 +32,24 @@ export function useQueryAndSetAllGoals(setAllGoals) {
     }, [isCategoryViewSelected, setAllGoals, categorizedGoals, importantGoals])
 }
 
-export function useFilterGoals({ criteria, method, fieldName }) {
+// TODO: error handling mismatch between goals and sortedIds =. 
+// if ids in the array is not present in the goals list, remove those ids, 
+// and add the ids that weren't present in the array
+function handleGoalIdMismatch(orderedGoalIds, filteredGoalIds) {
+    const validGoalIds = new Set(filteredGoalIds);
+
+    // Remove IDs that are not present in the filteredGoalIds
+    const validIds = orderedGoalIds.filter(id => validGoalIds.has(id));
+
+    // Add IDs that are in filteredGoals but not in goalIds
+    const missingIds = filteredGoalIds
+        .filter(goal => !validIds.includes(goal.id))
+        .map(goal => goal.id);
+
+    return [...validIds, ...missingIds];
+}
+
+function useFilterAndOrderCollectionGoals({ criteria, method, fieldName }) {
     const {
         isCategoryViewSelected,
         currentSpace,
@@ -39,54 +58,102 @@ export function useFilterGoals({ criteria, method, fieldName }) {
     } = useSpaceContext();
     const { allGoals } = useGoalListContext();
 
-    const [reorderedGoals, setReorderedGoals] = useState([]);
+    const [orderedGoals, setOrderedGoals] = useState([]);
     const goalPositionsArray = useRef([]);
 
     // Filter goals based on criteria and method
-    const filteredGoals = useMemo(() => {
-        return allGoals?.filter(goal => goal?.[method] === criteria) ?? []
-    }, [allGoals, method, criteria]);
+    const filteredGoals = useMemo(() => (
+        allGoals?.filter(goal => goal?.[method] === criteria) ?? []
+    ), [allGoals, method, criteria]);
 
-    // Set goal positions based on category or space
+    // define the position of goals based on the collection 
     useEffect(() => {
         if (isCategoryViewSelected) {
             const selectedCategory = categories.find(category => category.id === selectedCategoryId)
-            const goalPositionsInCategory = selectedCategory?.[fieldName] ?? []
-            goalPositionsArray.current = goalPositionsInCategory
+            const goalPositionsInCategory = selectedCategory?.[fieldName]
+            goalPositionsArray.current = goalPositionsInCategory ?? []
         }
-        else goalPositionsArray.current = currentSpace?.[fieldName]
+        else goalPositionsArray.current = currentSpace?.[fieldName] ?? []
     }, [categories, currentSpace, fieldName, isCategoryViewSelected, selectedCategoryId]);
 
-    // Reorder goals based on updated positions
+    // handle cases when the orderedGoalIds don't reflect the actual filtered goals
     useEffect(() => {
-        const updatedListOfGoals = reorderGoals(filteredGoals, goalPositionsArray.current);
-        setReorderedGoals(updatedListOfGoals);
+        const orderedGoalIds = goalPositionsArray.current
+        const filteredGoalIds = filteredGoals.map(goal => goal.id)
+        
+        if (areArraysEqual(orderedGoalIds, filteredGoalIds)) return
+
+        if (orderedGoalIds?.length === 0) {
+            // goals haven't been ordered, so we'll sort them arbitrarily
+            goalPositionsArray.current = filteredGoals?.map(goal => goal.id) ?? []
+        }
+        else {
+            goalPositionsArray.current = handleGoalIdMismatch(orderedGoalIds, filteredGoalIds)
+        }
+    }, [filteredGoals])
+
+    // order the filtered goals based on their position
+    useEffect(() => {
+        setOrderedGoals(
+            reorderGoals(filteredGoals, goalPositionsArray.current)
+        );
     }, [filteredGoals]);
 
-    // Update goal order when dragged
-    const updateGoalOrder = useCallback((activeId, overId) => {
-        const goalPositions = goalPositionsArray.current
-        if (!goalPositions) return []
-        goalPositionsArray.current = arrayMove(
-            goalPositions,
-            goalPositions.indexOf(activeId),
-            goalPositions.indexOf(overId)
-        );
-    }, []);
-
-    // Add a new goal to the list
-    const addNewGoal = useCallback((activeGoalId) => {
-        const goalPositions = goalPositionsArray.current
-
-        if (goalPositions.includes(activeGoalId)) return
-        goalPositionsArray.current = [...goalPositions, activeGoalId];
-    }, []);
-
-    // Return reordered goals, their positions, and update functions
     return {
-        goals: reorderedGoals,
-        sortedPositions: reorderedGoals?.map(goal => goal.id) ?? [],
-        addNewGoal,
-        updateGoalOrder,
-    };
+        collectionGoals: orderedGoals,
+        sortedGoalIdsRef: goalPositionsArray
+    }
+}
+
+export function useHandleGoalOrderAndCollectionChange(collectionCriteria) {
+    const { setAllGoals } = useGoalListContext();
+    const {
+        collectionGoals,
+        sortedGoalIdsRef
+    } = useFilterAndOrderCollectionGoals(collectionCriteria);
+
+    const updateGoalOrderArray = useCallback((activeId, overId) => {
+        const sortedGoalIds = sortedGoalIdsRef.current
+        if (!sortedGoalIds) return []
+
+        setAllGoals(allGoals => { // allGoals refer to goals being displayed in the current view in the space
+            const activeIndex = allGoals?.findIndex(g => g && g.id === activeId);
+            const overIndex = allGoals?.findIndex(g => g && g.id === overId);
+            return arrayMove(allGoals, activeIndex, overIndex);
+        });
+
+        sortedGoalIdsRef.current = arrayMove(
+            sortedGoalIds,
+            sortedGoalIds.indexOf(activeId),
+            sortedGoalIds.indexOf(overId)
+        );
+    }, [sortedGoalIdsRef, setAllGoals])
+
+    const updateGoalCollectionCriteria = useCallback((activeGoal, method) => {
+        const activeId = activeGoal?.id
+        const sortedGoalIds = sortedGoalIdsRef.current
+
+        if (!activeId || sortedGoalIds.includes(activeId)) return
+
+        const activeGoalWithUpdatedStatus = {
+            ...activeGoal,
+            [method]: collectionCriteria.criteria
+        }
+
+        setAllGoals(allGoals => ( // allGoals refer to goals being displayed in the current view in the space
+            allGoals.map(goal => {
+                if (goal.id === activeId) return activeGoalWithUpdatedStatus
+                return goal
+            })
+        ));
+
+        sortedGoalIdsRef.current = [...sortedGoalIds, activeId];
+    }, [collectionCriteria.criteria, sortedGoalIdsRef, setAllGoals]);
+
+    return {
+        goals: collectionGoals,
+        sortedGoalPositions: collectionGoals?.map(goal => goal.id) ?? [],
+        updateGoalOrderArray,
+        updateGoalCollectionCriteria,
+    }
 }

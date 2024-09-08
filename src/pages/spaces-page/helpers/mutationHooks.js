@@ -32,7 +32,6 @@ export const useUpdateGoalCollectionCriteriaMutation = () => {
 
     return useMutation({
         mutationFn: async ({ id, method, criteria }) => {
-
             const { data, error } = await supabase
                 .from('goals')
                 .update({ [method]: criteria })
