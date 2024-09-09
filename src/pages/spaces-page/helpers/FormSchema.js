@@ -16,7 +16,7 @@ const schedulingMethods = z.enum([
 ])
 
 // TODO: review the schema and update the submission handler
-export const CreateGoalSchema = z.object({
+export const GoalCreationSchema = z.object({
     title: z.string().optional(),
     approach: schedulingMethods.optional(),
     timeWindow: timeWindows.optional(),
@@ -26,6 +26,6 @@ export const CreateGoalSchema = z.object({
 // category creation
 
 // TODO: review the schema and update the submission handler
-export const CreateCategorySchema = z.object({
+export const CategoryCreationSchema = z.object({
     title: z.string().optional(),
 })

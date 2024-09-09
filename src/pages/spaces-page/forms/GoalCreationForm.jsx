@@ -1,8 +1,8 @@
 import { useForm } from 'react-hook-form';
-import { CreateGoalSchema } from '../helpers/formSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useGoalCollectionContext, useGoalCreationModalContext, useSpaceContext } from '../helpers/Contexts';
 import { useCreateGoalMutation } from '../helpers/mutationHooks';
+import { GoalCreationSchema } from '../helpers/formSchema';
 
 const GoalCreationForm = () => {
     const { collectionCriteria: { priority, status } } = useGoalCollectionContext()
@@ -10,7 +10,7 @@ const GoalCreationForm = () => {
     const { setIsModalVisible } = useGoalCreationModalContext()
 
     const { register, handleSubmit, formState: { errors }, reset } = useForm({
-        resolver: zodResolver(CreateGoalSchema)
+        resolver: zodResolver(GoalCreationSchema)
     });
 
     const createGoalMutation = useCreateGoalMutation();

@@ -1,14 +1,14 @@
 import { useForm } from 'react-hook-form';
-import { CreateCategorySchema } from '../helpers/formSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useSpaceContext } from '../helpers/Contexts';
 import { useCreateCategoryMutation } from '../helpers/mutationHooks';
+import { CategoryCreationSchema } from '../helpers/formSchema'
 
 const CategoryCreationForm = ({ hideModal }) => {
     const { currentSpaceId } = useSpaceContext()
 
     const { register, handleSubmit, formState: { errors }, reset } = useForm({
-        resolver: zodResolver(CreateCategorySchema)
+        resolver: zodResolver(CategoryCreationSchema)
     });
 
     // TODO: create the mutation function
@@ -47,7 +47,7 @@ const CategoryCreationForm = ({ hideModal }) => {
 
                 <button
                     className="w-full bg-dark1 text-light1 font-semibold px-5 py-3 rounded-lg"
-                    type="submit" 
+                    type="submit"
                     disabled={createCategoryMutation.isLoading}
                 >
                     {createCategoryMutation.isLoading ? 'Creating...' : 'Create Category'}
