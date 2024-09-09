@@ -61,14 +61,14 @@ const GoalCollectionCard = ({ collectionCriteria }) => {
 
             if (isDraggedInSameCollection) {
                 updateGoalOrderArray(active.id, over.id)
+                updateGoalPositionsInDb()
             }
 
             if (isDraggedInDifferentCollection) {
                 updateGoalCollectionCriteria(active.data?.current?.goal, method)
                 updateCollectionCriteria.mutate({ id: event.active.id, method, criteria })
+                updateGoalPositionsInDb()
             }
-
-            updateGoalPositionsInDb()
         },
     });
 
